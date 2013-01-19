@@ -1,11 +1,16 @@
-var restful = require('./restful');
+var restful = require('../lib/restful');
 
-var app = restful();
+
+var app = restful({
+  hostname: 'localhost',
+  port: 27017,
+  db: 'dev', 
+});
 
 var fields = app.fields;
 
 app.register({
-  title: "Movies",
+  title: "movies",
   methods: ['get', 'post', 'put', 'delete'],
   fields: {
     title: fields.CharField({
@@ -16,7 +21,7 @@ app.register({
   }
 });
 app.register({
-  title: "comments",
+  title: "reviews",
   parent: "movies",
   methods: ['get', 'post', 'put', 'delete'],
   fields: {
@@ -29,7 +34,7 @@ app.register({
 });
 app.register({
   title: "likes",
-  parent: "comments",
+  parent: "reviews",
   methods: ['get', 'post', 'put', 'delete'],
   fields: {
     title: fields.CharField({
