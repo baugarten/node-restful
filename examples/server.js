@@ -1,4 +1,5 @@
-var restful = require('../lib/restful');
+var restful = require('../lib/restful'),
+    mongoose = require('mongoose');
 
 
 var app = restful({
@@ -7,42 +8,31 @@ var app = restful({
   db: 'dev', 
 });
 
-var fields = app.fields;
-
 app.register({
   title: "movies",
   methods: ['get', 'post', 'put', 'delete'],
-  fields: {
-    title: fields.CharField({
-             max_length: 100
-           }),
-    year: fields.IntegerField({
-          }),
-  }
+  schema: mongoose.Schema({
+    title: 'string',
+    year: 'number', 
+  }),
 });
 app.register({
   title: "reviews",
   parent: "movies",
   methods: ['get', 'post', 'put', 'delete'],
-  fields: {
-    title: fields.CharField({
-             max_length: 100
-           }),
-    year: fields.IntegerField({
-          }),
-  }
+  schema: mongoose.Schema({
+    title: 'string',
+    year: 'number', 
+  }),
 });
 app.register({
   title: "likes",
   parent: "reviews",
   methods: ['get', 'post', 'put', 'delete'],
-  fields: {
-    title: fields.CharField({
-             max_length: 100
-           }),
-    year: fields.IntegerField({
-          }),
-  }
+  schema: mongoose.Schema({
+    title: 'string',
+    year: 'number', 
+  }),
 });
 
 app.listen(3000);
