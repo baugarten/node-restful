@@ -1,0 +1,17 @@
+{
+  "name": "node-restful",
+  "description": "A RESTful framework for node.js applications",
+  "version": "0.0.0",
+  "dependencies": {
+    "connect": "2.7.2",
+    "mongoose": "3.5.4"
+  },
+  "keywords": [
+    "node-restful",
+    "framework",
+    "rest",
+    "restful"
+  ],
+  "repository": "git://github.com/baugarten/node-restul",
+  "main": "index.js"
+}
