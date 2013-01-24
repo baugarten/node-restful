@@ -6,6 +6,11 @@
     "connect": "2.7.2",
     "mongoose": "3.5.4"
   },
+  "devDependencies": {
+    "mocha": "1.8.1",
+    "should": "*",
+    "supertest": "*"
+  },
   "keywords": [
     "node-restful",
     "framework",
