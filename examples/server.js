@@ -12,8 +12,8 @@ app.register({
   title: "movies",
   methods: ['get', 'post', 'put', 'delete'],
   schema: mongoose.Schema({
-    title: 'string',
-    year: 'number', 
+    title: { type: 'string', required: true },
+    year: { type: 'number', required: true },
   }),
 });
 app.register({
