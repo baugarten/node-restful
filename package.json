@@ -17,6 +17,9 @@
     "rest",
     "restful"
   ],
+  "scripts": {
+    "test": "make test"
+  },
   "repository": "git://github.com/baugarten/node-restul",
   "main": "index.js"
 }
