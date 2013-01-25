@@ -16,6 +16,10 @@ describe('Model', function() {
       schema: mongoose.Schema({
         title: { type: 'string', required: true },
         year: { type: 'number' },
+        meta: {
+          productionco: 'string',
+          directory: 'string',
+        }
       }),
       update: {
         sort: false
@@ -58,19 +62,27 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
+    var movie1, movie2, movie3;
     before(function() {
-      new movies.Obj({
+      movie1 = new movies.Obj({
         title: "Title1",
-          year: 2012
-      }).save();
-      new movies.Obj({
+        year: 2012,
+        meta: {
+          productionco: "idk",
+          director: "Ben Augarten"
+        }
+      });
+      movie1.save();
+      movie2 = new movies.Obj({
         title: "Title2",
           year: 2011
-      }).save();
-      new movies.Obj({
+      });
+      movie2.save();
+      movie3 = new movies.Obj({
         title: "Title3",
           year: 2013
-      }).save();
+      });
+      movie3.save();
     });
     it('should dispatch to GET', function(done) {
       request(app)
@@ -113,6 +125,13 @@ describe('Model', function() {
         .del('/movies')
         .expect('Content-Type', /json/)
         .expect(404, done)
+    });
+    it.skip('should return a nested model at the generated endpoint', function(done) {
+      request(app)
+        .get('/movies/' + movie1._id + '/meta')
+        .expect('Content-Type', /json/)
+        .expect('body', /^.*?\bidk\b.*?\bBen Augarten\b.*?$/)
+        .expect(200, done);
     });
   });
 });
