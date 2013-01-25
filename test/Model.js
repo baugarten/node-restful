@@ -60,13 +60,18 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
-    var movie1, movie2, movie3, user;
+    var movie1, movie2, movie3, user1, user2;
     before(function() {
-      user = new users.Obj({
+      user1 = new users.Obj({
         username: "test",
         pass_hash: 12374238719845134515,
       });
-      user.save();
+      user1.save();
+      user2 = new users.Obj({
+        username: "test2",
+        pass_hash: 1237987381263189273123,
+      });
+      user2.save();
       movie1 = new movies.Obj({
         title: "Title1",
         year: 2012,
@@ -74,7 +79,7 @@ describe('Model', function() {
           productionco: "idk",
           director: "Ben Augarten"
         },
-        creator: user._id
+        creator: user1._id
       });
       movie1.save();
       movie2 = new movies.Obj({
@@ -138,6 +143,7 @@ describe('Model', function() {
         .end(function(err, res) {
           if (err) return done(err);
           res.should.be.json;
+          console.log(res.body);
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
           done();
