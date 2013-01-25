@@ -17,7 +17,11 @@ describe('Model', function() {
         title: { type: 'string', required: true },
         year: { type: 'number' },
         creator: { type: 'ObjectId', ref: "users" },
-        comments: [{ body: String, date: Date }],
+        comments: [{ body: String, date: Date, author: { type: 'ObjectId', ref: 'users' }}],
+        meta: {
+          productionco: "string",
+          director: { type: 'ObjectId', ref: 'users' },
+        }
       }),
       update: {
         sort: false
@@ -77,7 +81,7 @@ describe('Model', function() {
         year: 2012,
         meta: {
           productionco: "idk",
-          director: "Ben Augarten"
+          director: user2._id,
         },
         creator: user1._id
       });
@@ -154,6 +158,20 @@ describe('Model', function() {
         .get('/movies/creator')
         .expect('Content-Type', /json/)
         .expect(404, done);
+    });
+    it('should retrieve a deeply nested endpoint', function(done) {
+      request(app)
+        .get('/movies/' + movie1._id + '/meta/director')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          console.log(res.body);
+          res.should.be.json;
+          res.body.username.should.equal('test2');
+          res.body.pass_hash.should.equal(1237987381263189273123);
+          done();
+        });
+
     });
   });
 });
