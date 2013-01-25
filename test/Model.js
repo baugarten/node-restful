@@ -149,5 +149,11 @@ describe('Model', function() {
           done();
         }); 
     });
+    it('should 404 if we request an object endpoint without a filter', function(done) {
+      request(app)
+        .get('/movies/creator')
+        .expect('Content-Type', /json/)
+        .expect(404, done);
+    });
   });
 });
