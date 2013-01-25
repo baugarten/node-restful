@@ -16,10 +16,7 @@ describe('Model', function() {
       schema: mongoose.Schema({
         title: { type: 'string', required: true },
         year: { type: 'number' },
-        meta: {
-          productionco: 'string',
-          directory: 'string',
-        },
+        creator: { type: 'ObjectId', ref: "users" },
         comments: [{ body: String, date: Date }],
       }),
       update: {
@@ -63,15 +60,21 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
-    var movie1, movie2, movie3;
+    var movie1, movie2, movie3, user;
     before(function() {
+      user = new users.Obj({
+        username: "test",
+        pass_hash: 12374238719845134515,
+      });
+      user.save();
       movie1 = new movies.Obj({
         title: "Title1",
         year: 2012,
         meta: {
           productionco: "idk",
           director: "Ben Augarten"
-        }
+        },
+        creator: user._id
       });
       movie1.save();
       movie2 = new movies.Obj({
@@ -129,10 +132,16 @@ describe('Model', function() {
     });
     it('should return a nested model at the generated endpoint', function(done) {
       request(app)
-        .get('/movies/' + movie1._id + '/meta')
+        .get('/movies/' + movie1._id + '/creator')
         .expect('Content-Type', /json/)
-        .expect('body', /^.*?\bidk\b.*?\bBen Augarten\b.*?$/)
-        .expect(200, done);
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          console.log(res);
+          res.body.username.should.equal('test');
+          res.body.pass_hash.should.equal(12374238719845134515);
+          done();
+        }); 
     });
   });
 });
