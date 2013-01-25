@@ -58,6 +58,20 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
+    before(function() {
+      new movies.Obj({
+        title: "Title1",
+          year: 2012
+      }).save();
+      new movies.Obj({
+        title: "Title2",
+          year: 2011
+      }).save();
+      new movies.Obj({
+        title: "Title3",
+          year: 2013
+      }).save();
+    });
     it('should dispatch to GET', function(done) {
       request(app)
         .get('/movies')
