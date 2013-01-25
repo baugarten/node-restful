@@ -10,7 +10,7 @@ describe('Model', function() {
       users,
       app; 
   before(function() {
-    movies = new Model({
+    var moviesopts = {
       title: "movies",
       methods: ['get', 'post', 'put'],
       schema: mongoose.Schema({
@@ -19,7 +19,8 @@ describe('Model', function() {
         meta: {
           productionco: 'string',
           directory: 'string',
-        }
+        },
+        comments: [{ body: String, date: Date }],
       }),
       update: {
         sort: false
@@ -27,8 +28,8 @@ describe('Model', function() {
       delete: {
         sort: false
       }
-    });
-    users = new Model({
+    }
+    var usersopts = {
       title: "users",
       methods: ['get', 'post', 'put', 'delete'],
       schema: mongoose.Schema({
@@ -38,13 +39,13 @@ describe('Model', function() {
       delete: {
         sort: false
       }
-    });
+    }
     app = restful({
       hostname: 'localhost',
       db: 'testing',
     });
-    movies.register(app);
-    users.register(app);
+    movies = app.register(moviesopts);
+    users = app.register(usersopts);
   });
     
   describe('.populateRoutes', function() {
@@ -126,7 +127,7 @@ describe('Model', function() {
         .expect('Content-Type', /json/)
         .expect(404, done)
     });
-    it.skip('should return a nested model at the generated endpoint', function(done) {
+    it('should return a nested model at the generated endpoint', function(done) {
       request(app)
         .get('/movies/' + movie1._id + '/meta')
         .expect('Content-Type', /json/)

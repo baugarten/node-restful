@@ -14,10 +14,14 @@ app.register({
   schema: mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number', required: true },
-    reviews: {
-      content: {type: 'string'},
-      date: { type: 'Date' },
-    }
+    comments: [{
+      name: {type: 'String'},
+      date: {type: 'Date'},
+    }],
+    meta: {
+      productionco: 'string',
+      director: 'string',
+    },
   }),
 });
 app.register({
