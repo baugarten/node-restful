@@ -1,4 +1,4 @@
-[![build status](https://secure.travis-ci.org/baugarten/node-restful.png)](http://travis-ci.org/baugarten/node-restful)
+[![build status](https://secure.travis-ci.org/baugarten/node-restful.png?branch=master)](http://travis-ci.org/baugarten/node-restful)
 
 node-restful
 ============
