@@ -10,16 +10,14 @@ describe('Model', function() {
       users,
       app; 
   before(function() {
-    movies = new Model({
+    var moviesopts = {
       title: "movies",
       methods: ['get', 'post', 'put'],
       schema: mongoose.Schema({
         title: { type: 'string', required: true },
         year: { type: 'number' },
-        meta: {
-          productionco: 'string',
-          directory: 'string',
-        }
+        creator: { type: 'ObjectId', ref: "users" },
+        comments: [{ body: String, date: Date }],
       }),
       update: {
         sort: false
@@ -27,8 +25,8 @@ describe('Model', function() {
       delete: {
         sort: false
       }
-    });
-    users = new Model({
+    }
+    var usersopts = {
       title: "users",
       methods: ['get', 'post', 'put', 'delete'],
       schema: mongoose.Schema({
@@ -38,13 +36,13 @@ describe('Model', function() {
       delete: {
         sort: false
       }
-    });
+    }
     app = restful({
       hostname: 'localhost',
       db: 'testing',
     });
-    movies.register(app);
-    users.register(app);
+    movies = app.register(moviesopts);
+    users = app.register(usersopts);
   });
     
   describe('.populateRoutes', function() {
@@ -62,15 +60,26 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
-    var movie1, movie2, movie3;
+    var movie1, movie2, movie3, user1, user2;
     before(function() {
+      user1 = new users.Obj({
+        username: "test",
+        pass_hash: 12374238719845134515,
+      });
+      user1.save();
+      user2 = new users.Obj({
+        username: "test2",
+        pass_hash: 1237987381263189273123,
+      });
+      user2.save();
       movie1 = new movies.Obj({
         title: "Title1",
         year: 2012,
         meta: {
           productionco: "idk",
           director: "Ben Augarten"
-        }
+        },
+        creator: user1._id
       });
       movie1.save();
       movie2 = new movies.Obj({
@@ -126,12 +135,25 @@ describe('Model', function() {
         .expect('Content-Type', /json/)
         .expect(404, done)
     });
-    it.skip('should return a nested model at the generated endpoint', function(done) {
+    it('should return a nested model at the generated endpoint', function(done) {
       request(app)
-        .get('/movies/' + movie1._id + '/meta')
+        .get('/movies/' + movie1._id + '/creator')
         .expect('Content-Type', /json/)
-        .expect('body', /^.*?\bidk\b.*?\bBen Augarten\b.*?$/)
-        .expect(200, done);
+        .expect(200)
+        .end(function(err, res) {
+          if (err) return done(err);
+          res.should.be.json;
+          console.log(res.body);
+          res.body.username.should.equal('test');
+          res.body.pass_hash.should.equal(12374238719845134515);
+          done();
+        }); 
+    });
+    it('should 404 if we request an object endpoint without a filter', function(done) {
+      request(app)
+        .get('/movies/creator')
+        .expect('Content-Type', /json/)
+        .expect(404, done);
     });
   });
 });
