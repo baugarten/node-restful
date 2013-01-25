@@ -35,7 +35,10 @@ describe('Model', function() {
         sort: false
       }
     });
-    app = restful();
+    app = restful({
+      hostname: 'localhost',
+      db: 'testing',
+    });
     movies.register(app);
     users.register(app);
   });
