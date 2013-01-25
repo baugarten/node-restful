@@ -147,7 +147,6 @@ describe('Model', function() {
         .end(function(err, res) {
           if (err) return done(err);
           res.should.be.json;
-          console.log(res.body);
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
           done();
@@ -165,13 +164,18 @@ describe('Model', function() {
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
-          console.log(res.body);
           res.should.be.json;
           res.body.username.should.equal('test2');
           res.body.pass_hash.should.equal(1237987381263189273123);
           done();
         });
 
+    });
+    it('should 404 on a nested object', function(done) {
+      request(app)
+        .get('/movies/' + movie1._id + '/meta')
+        .expect('Content-Type', /json/)
+        .expect(404, done)
     });
   });
 });
