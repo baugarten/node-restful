@@ -28,7 +28,8 @@ describe('Model', function() {
       },
       delete: {
         sort: false
-      }
+      },
+      version: "api",
     }
     var usersopts = {
       title: "users",
@@ -99,19 +100,19 @@ describe('Model', function() {
     });
     it('should dispatch to GET', function(done) {
       request(app)
-        .get('/movies')
+        .get('/api/movies')
         .expect('Content-Type', /json/)
         .expect(200, done)
     }); 
     it('should fail POST with no data', function(done) {
       request(app)
-        .post('/movies')
+        .post('/api/movies')
         .expect('Content-Type', /json/)
         .expect(400, done)
     });
     it('should POST with data', function(done) {
       request(app)
-        .post('/movies')
+        .post('/api/movies')
         .send({
           title: "A very stupid movie",  
         })
@@ -120,7 +121,7 @@ describe('Model', function() {
     });
     it('should fail on PUT without filter on unsortable model', function(done) {
       request(app)
-        .put('/movies')
+        .put('/api/movies')
         .send({
           title: "A very stupid movie",  
         })
@@ -135,13 +136,13 @@ describe('Model', function() {
     });
     it('should 404 on undefined route', function(done) {
       request(app)
-        .del('/movies')
+        .del('/api/movies')
         .expect('Content-Type', /json/)
         .expect(404, done)
     });
     it('should return a nested model at the generated endpoint', function(done) {
       request(app)
-        .get('/movies/' + movie1._id + '/creator')
+        .get('/api/movies/' + movie1._id + '/creator')
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
@@ -155,13 +156,13 @@ describe('Model', function() {
     });
     it('should 404 if we request an object endpoint without a filter', function(done) {
       request(app)
-        .get('/movies/creator')
+        .get('/api/movies/creator')
         .expect('Content-Type', /json/)
         .expect(404, done);
     });
     it('should retrieve a deeply nested endpoint', function(done) {
       request(app)
-        .get('/movies/' + movie1._id + '/meta/director')
+        .get('/api/movies/' + movie1._id + '/meta/director')
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
@@ -174,7 +175,7 @@ describe('Model', function() {
     });
     it('should 404 on a nested object', function(done) {
       request(app)
-        .get('/movies/' + movie1._id + '/meta')
+        .get('/api/movies/' + movie1._id + '/meta')
         .expect('Content-Type', /json/)
         .expect(404, done)
     });
