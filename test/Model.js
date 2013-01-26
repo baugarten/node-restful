@@ -146,6 +146,7 @@ describe('Model', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
+          console.log(res);
           res.should.be.json;
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
