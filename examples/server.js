@@ -34,6 +34,14 @@ app.register({
       director: 'string',
     },
   }),
+  routes: {
+    recommend: function(req, res, next) {
+      res.writeHead(200, {'Content-Type': 'application/json' });
+      res.write(JSON.stringify({
+        hello: "HIIII",
+      }));
+    }
+  },
 });
 app.register({
   title: "reviews",
