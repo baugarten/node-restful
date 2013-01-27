@@ -8,7 +8,12 @@ var restful = require('../'),
 describe('Model', function() {
   var movies, 
       users,
-      app; 
+      app, 
+      movie1, 
+      movie2, 
+      movie3, 
+      user1, 
+      user2;
   before(function() {
     var moviesopts = {
       title: "movies",
@@ -29,6 +34,15 @@ describe('Model', function() {
       delete: {
         sort: false
       },
+      routes: {
+        recommend: function(req, res, next) {
+          res.writeHead(200, {'Content-Type': 'application/json' });
+          res.write(JSON.stringify({
+            hello: "HIIII",
+          }));
+          res.end();
+        },
+      },
       version: "api",
     }
     var usersopts = {
@@ -48,6 +62,36 @@ describe('Model', function() {
     });
     movies = app.register(moviesopts);
     users = app.register(usersopts);
+    user1 = new users.Obj({
+      username: "test",
+      pass_hash: 12374238719845134515,
+    });
+    user1.save();
+    user2 = new users.Obj({
+      username: "test2",
+      pass_hash: 1237987381263189273123,
+    });
+    user2.save();
+    movie1 = new movies.Obj({
+      title: "Title1",
+      year: 2012,
+      meta: {
+        productionco: "idk",
+        director: user2._id,
+      },
+      creator: user1._id
+    });
+    movie1.save();
+    movie2 = new movies.Obj({
+      title: "Title2",
+        year: 2011
+    });
+    movie2.save();
+    movie3 = new movies.Obj({
+      title: "Title3",
+        year: 2013
+    });
+    movie3.save();
   });
     
   describe('.populateRoutes', function() {
@@ -65,39 +109,6 @@ describe('Model', function() {
   });
 
   describe('.dispatch', function() {
-    var movie1, movie2, movie3, user1, user2;
-    before(function() {
-      user1 = new users.Obj({
-        username: "test",
-        pass_hash: 12374238719845134515,
-      });
-      user1.save();
-      user2 = new users.Obj({
-        username: "test2",
-        pass_hash: 1237987381263189273123,
-      });
-      user2.save();
-      movie1 = new movies.Obj({
-        title: "Title1",
-        year: 2012,
-        meta: {
-          productionco: "idk",
-          director: user2._id,
-        },
-        creator: user1._id
-      });
-      movie1.save();
-      movie2 = new movies.Obj({
-        title: "Title2",
-          year: 2011
-      });
-      movie2.save();
-      movie3 = new movies.Obj({
-        title: "Title3",
-          year: 2013
-      });
-      movie3.save();
-    });
     it('should dispatch to GET', function(done) {
       request(app)
         .get('/api/movies')
@@ -147,7 +158,6 @@ describe('Model', function() {
         .expect(200)
         .end(function(err, res) {
           if (err) return done(err);
-          console.log(res);
           res.should.be.json;
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
@@ -178,6 +188,18 @@ describe('Model', function() {
         .get('/api/movies/' + movie1._id + '/meta')
         .expect('Content-Type', /json/)
         .expect(404, done)
+    });
+    it('should get a user defined route', function(done) {
+      request(app)
+        .get('/api/movies/recommend')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          console.log(res);
+          res.should.be.json;
+          res.body.hello.should.equal("HIIII");
+          done();
+        });
     });
   });
 });
