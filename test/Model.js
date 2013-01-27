@@ -38,10 +38,31 @@ describe('Model', function() {
         recommend: function(req, res, next) {
           res.writeHead(200, {'Content-Type': 'application/json' });
           res.write(JSON.stringify({
-            hello: "HIIII",
+            recommend: "called",
           }));
           res.end();
         },
+        anotherroute: {
+          handler: function(req, res, next) {
+            res.writeHead(200, {'Content-Type': 'application/json' });
+            res.write(JSON.stringify({
+              anotherroute: "called",
+            }));
+            res.end();
+          },
+        },
+        athirdroute: {
+          handler: function(req, res, next, err, obj) {
+            res.writeHead(200, {'Content-Type': 'application/json' });
+            res.write(JSON.stringify({
+              athirdroute: "called",
+              object: obj
+            }));
+            res.end();
+          },
+          methods: ['get', 'post'],
+          detail: true,
+        }
       },
       version: "api",
     }
@@ -195,11 +216,45 @@ describe('Model', function() {
         .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
-          console.log(res);
           res.should.be.json;
-          res.body.hello.should.equal("HIIII");
+          res.body.recommend.should.equal("called");
           done();
         });
+    });
+    it('should get anotheroute (user defined route)', function(done) {
+      request(app)
+        .get('/api/movies/anotherroute')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          res.should.be.json;
+          res.body.anotherroute.should.equal("called");
+          done();
+        });
+    });
+    it('should get athirdroute (user defined route)', function(done) {
+      request(app)
+        .get('/api/movies/' + movie1._id + '/athirdroute')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          res.should.be.json;
+          res.body.athirdroute.should.equal("called");
+          res.body.object._id.should.equal(String(movie1._id));
+          done();
+        });
+    });
+    it('should fail athirdroute (user defined route)', function(done) {
+      request(app)
+        .get('/api/movies/athirdroute')
+        .expect('Content-Type', /json/)
+        .expect(404, done);
+    });
+    it('should fail athirdroute (user defined route)', function(done) {
+      request(app)
+        .put('/api/movies/athirdroute')
+        .expect('Content-Type', /json/)
+        .expect(404, done);
     });
   });
 });
