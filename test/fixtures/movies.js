@@ -5,7 +5,19 @@ var users = require('./users'),
 
 var moviemodel = {
   title: "movies",
-  methods: ['get', 'post', 'put'],
+  methods: [
+    {
+      type: 'get',
+      before: function(req, res, next) { 
+        this._before = true;
+      },
+      after: function(req, res, next) { 
+        this._after = true;
+      },
+    },
+    'post',
+    'put'
+  ],
   schema: mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number' },
