@@ -8,8 +8,9 @@
   },
   "devDependencies": {
     "mocha": "1.8.1",
-    "should": "*",
-    "supertest": "*"
+    "should": "1.2.1",
+    "supertest": "0.5.1",
+    "sinon": "1.5.2"
   },
   "keywords": [
     "node-restful",
