@@ -1,19 +1,22 @@
 var users = require('./users'),
     mongoose = require('mongoose'),
+    sinon = require('sinon'),
     movie,
-    movieobjs = [];
+    movieobjs = [],
+    spies = {
+      get: {
+        before: sinon.spy(),
+        after: sinon.spy(),
+      },
+    }
 
 var moviemodel = {
   title: "movies",
   methods: [
     {
       type: 'get',
-      before: function(req, res, next) { 
-        this._before = true;
-      },
-      after: function(req, res, next) { 
-        this._after = true;
-      },
+      before: spies.get.before,
+      after: spies.get.after,
     },
     'post',
     'put'
@@ -87,6 +90,7 @@ exports.register = function(app) {
       year: 2013
   }];
   movie = app.register(moviemodel);
+  movie.spies = spies;
   movies.forEach(function(movieopts) {
     var obj = new movie.Obj(movieopts);
     obj.save();
