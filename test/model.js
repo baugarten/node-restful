@@ -1,46 +1,28 @@
-var restful = require('../'), 
-    Model = require('../lib/model'),
-    mongoose = require('mongoose'),
-    assert = require('assert'),
-    should = require('should'),
+var should = require('should'),
     request = require('supertest'),
     config = require('./fixtures/config');
 
 describe('Model', function() {
-  var movies, 
-      users,
-      app, 
-      movie1, 
-      movie2, 
-      movie3, 
-      user1, 
-      user2;
-  before(function() {
-    app = config.app;
-    movies = config.movie;
-    users = config.user;
-    movie1 = config.movies[0];
-    movie2 = config.movies[1];
-    movie3 = config.movies[2];
-    user1 = config.users[0];
-    user2 = config.users[1];
-  });
-    
-  describe('.populateRoutes', function() {
-    it('should populate routes for the given methods', function() {
-      movies.routes['get'].should.be.a('function');
-      movies.routes['post'].should.be.a('function');
-      movies.routes['put'].should.be.a('function');
-      movies.routes.should.not.have.property('delete');
-
-      users.routes['get'].should.be.a('function');
-      users.routes['post'].should.be.a('function');
-      users.routes['put'].should.be.a('function');
-      users.routes['delete'].should.be.a('function');
-    });
-  });
-
   describe('.dispatch', function() {
+    var movies, 
+        users,
+        app, 
+        movie1, 
+        movie2, 
+        movie3, 
+        user1, 
+        user2;
+    before(function() {
+      app = config.app;
+      movies = config.movie;
+      users = config.user;
+      movie1 = config.movies[0];
+      movie2 = config.movies[1];
+      movie3 = config.movies[2];
+      user1 = config.users[0];
+      user2 = config.users[1];
+    });
+    
     it('should dispatch to GET', function(done) {
       request(app)
         .get('/api/movies')
