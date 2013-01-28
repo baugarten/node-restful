@@ -3,27 +3,34 @@ var should = require('should'),
     config = require('./fixtures/config');
 
 describe('Model', function() {
-  describe('.dispatch', function() {
-    var movies, 
-        users,
-        app, 
-        movie1, 
-        movie2, 
-        movie3, 
-        user1, 
-        user2;
-    before(function() {
-      app = config.app;
-      movies = config.movie;
-      users = config.user;
-      movie1 = config.movies[0];
-      movie2 = config.movies[1];
-      movie3 = config.movies[2];
-      user1 = config.users[0];
-      user2 = config.users[1];
+  var movies, 
+      users,
+      app, 
+      movie1, 
+      movie2, 
+      movie3, 
+      user1, 
+      user2;
+  before(function() {
+    app = config.app;
+    movies = config.movie;
+    users = config.user;
+    movie1 = config.movies[0];
+    movie2 = config.movies[1];
+    movie3 = config.movies[2];
+    user1 = config.users[0];
+    user2 = config.users[1];
+  });
+  describe('instantiation', function() {
+    it('should inherit from EventEmitter', function(done) {
+      movies.on('foo', done);
+      movies.emit('foo');
     });
+  });
+  describe('.dispatch', function() {
     
     it('should dispatch to GET', function(done) {
+      console.log("Dispatch to get");
       request(app)
         .get('/api/movies')
         .expect('Content-Type', /json/)
