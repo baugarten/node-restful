@@ -3,7 +3,8 @@ var restful = require('../'),
     mongoose = require('mongoose'),
     assert = require('assert'),
     should = require('should'),
-    request = require('supertest');
+    request = require('supertest'),
+    config = require('./fixtures/config');
 
 describe('Model', function() {
   var movies, 
@@ -15,104 +16,14 @@ describe('Model', function() {
       user1, 
       user2;
   before(function() {
-    var moviesopts = {
-      title: "movies",
-      methods: ['get', 'post', 'put'],
-      schema: mongoose.Schema({
-        title: { type: 'string', required: true },
-        year: { type: 'number' },
-        creator: { type: 'ObjectId', ref: "users" },
-        comments: [{ body: String, date: Date, author: { type: 'ObjectId', ref: 'users' }}],
-        meta: {
-          productionco: "string",
-          director: { type: 'ObjectId', ref: 'users' },
-        }
-      }),
-      update: {
-        sort: false
-      },
-      delete: {
-        sort: false
-      },
-      routes: {
-        recommend: function(req, res, next) {
-          res.writeHead(200, {'Content-Type': 'application/json' });
-          res.write(JSON.stringify({
-            recommend: "called",
-          }));
-          res.end();
-        },
-        anotherroute: {
-          handler: function(req, res, next) {
-            res.writeHead(200, {'Content-Type': 'application/json' });
-            res.write(JSON.stringify({
-              anotherroute: "called",
-            }));
-            res.end();
-          },
-        },
-        athirdroute: {
-          handler: function(req, res, next, err, obj) {
-            res.writeHead(200, {'Content-Type': 'application/json' });
-            res.write(JSON.stringify({
-              athirdroute: "called",
-              object: obj
-            }));
-            res.end();
-          },
-          methods: ['get', 'post'],
-          detail: true,
-        }
-      },
-      version: "api",
-    }
-    var usersopts = {
-      title: "users",
-      methods: ['get', 'post', 'put', 'delete'],
-      schema: mongoose.Schema({
-        username: { type: 'string', required: true },
-        pass_hash: { type: 'number', required: true },
-      }),
-      delete: {
-        sort: false
-      }
-    }
-    app = restful({
-      hostname: 'localhost',
-      db: 'testing',
-    });
-    movies = app.register(moviesopts);
-    users = app.register(usersopts);
-    user1 = new users.Obj({
-      username: "test",
-      pass_hash: 12374238719845134515,
-    });
-    user1.save();
-    user2 = new users.Obj({
-      username: "test2",
-      pass_hash: 1237987381263189273123,
-    });
-    user2.save();
-    movie1 = new movies.Obj({
-      title: "Title1",
-      year: 2012,
-      meta: {
-        productionco: "idk",
-        director: user2._id,
-      },
-      creator: user1._id
-    });
-    movie1.save();
-    movie2 = new movies.Obj({
-      title: "Title2",
-        year: 2011
-    });
-    movie2.save();
-    movie3 = new movies.Obj({
-      title: "Title3",
-        year: 2013
-    });
-    movie3.save();
+    app = config.app;
+    movies = config.movie;
+    users = config.user;
+    movie1 = config.movies[0];
+    movie2 = config.movies[1];
+    movie3 = config.movies[2];
+    user1 = config.users[0];
+    user2 = config.users[1];
   });
     
   describe('.populateRoutes', function() {
