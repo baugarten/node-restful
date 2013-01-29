@@ -27,10 +27,8 @@ describe('Model', function() {
         });
     });
     it('should call the before hook on a PUT', function(done) {
-      console.log(config.movies[0]);
       request(app).put('/api/movies/' + config.movies[0]._id)
         .end(function(err, res) { 
-          console.log(res.body);
           movie.spies.put.before.called.should.be.true;
           movie.spies.put.after.called.should.be.true;
           done(); 

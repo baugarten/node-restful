@@ -30,7 +30,6 @@ describe('Model', function() {
   describe('.dispatch', function() {
     
     it('should dispatch to GET', function(done) {
-      console.log("Dispatch to get");
       request(app)
         .get('/api/movies')
         .expect('Content-Type', /json/)
