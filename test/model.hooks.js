@@ -34,13 +34,5 @@ describe('Model', function() {
           done(); 
         });
     });
-    it.skip('should call the before hook on a DELETE', function(done) {
-      request(app).get('/api/movies')
-        .end(function() { 
-          movie.spies.delete.before.called.should.be.true;
-          movie.spies.delete.after.called.should.be.true;
-          done(); 
-        });
-    });
   });
 });
