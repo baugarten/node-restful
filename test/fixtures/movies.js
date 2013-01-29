@@ -37,6 +37,7 @@ var moviemodel = {
       after: spies.put.after,
     },
   ],
+  excludes: ['secret'],
   schema: mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number' },
@@ -45,7 +46,8 @@ var moviemodel = {
     meta: {
       productionco: "string",
       director: { type: 'ObjectId', ref: 'users' },
-    }
+    },
+    secret: { type: 'string', select: false }
   }),
   update: {
     sort: false
@@ -98,6 +100,7 @@ exports.register = function(app) {
       director: users.users[1]._id,
     },
     creator: users.users[0]._id,
+    secret: "A SECRET STRING",
   }, { 
     title: "Title2", 
       year: 2011 
