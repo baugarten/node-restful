@@ -8,6 +8,14 @@ var users = require('./users'),
         before: sinon.spy(),
         after: sinon.spy(),
       },
+      put: {
+        before: sinon.spy(),
+        after: sinon.spy(),
+      },
+      post: {
+        before: sinon.spy(),
+        after: sinon.spy(),
+      },
     }
 
 var moviemodel = {
@@ -18,8 +26,16 @@ var moviemodel = {
       before: spies.get.before,
       after: spies.get.after,
     },
-    'post',
-    'put'
+    {
+      type: 'post',
+      before: spies.post.before,
+      after: spies.post.after,
+    },
+    {
+      type: 'put',
+      before: spies.put.before,
+      after: spies.put.after,
+    },
   ],
   schema: mongoose.Schema({
     title: { type: 'string', required: true },
