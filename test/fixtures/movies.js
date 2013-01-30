@@ -4,18 +4,20 @@ var users = require('./users'),
     sinon = require('sinon'),
     movie,
     movieobjs = [],
+    before = function(req, res, next) { next(); },
+    after = function(req, res, next, err, model) { next(); },
     spies = {
       get: {
-        before: sinon.spy(),
-        after: sinon.spy(),
+        before: sinon.spy(before),
+        after: sinon.spy(after),
       },
       put: {
-        before: sinon.spy(),
-        after: sinon.spy(),
+        before: sinon.spy(before),
+        after: sinon.spy(after),
       },
       post: {
-        before: sinon.spy(),
-        after: sinon.spy(),
+        before: sinon.spy(before),
+        after: sinon.spy(after),
       },
     }
 
@@ -59,28 +61,32 @@ var moviemodel = {
   routes: {
     recommend: function(req, res, next) {
       res.writeHead(200, {'Content-Type': 'application/json' });
-      res.write(JSON.stringify({
+      res.bundle = JSON.stringify({
         recommend: "called",
-      }));
-      res.end();
+      });
+      next();
     },
     anotherroute: {
       handler: function(req, res, next) {
         res.writeHead(200, {'Content-Type': 'application/json' });
-        res.write(JSON.stringify({
+        res.bundle = JSON.stringify({
           anotherroute: "called",
-        }));
-        res.end();
+        });
+        next();
       },
     },
     athirdroute: {
       handler: function(req, res, next, err, obj) {
+        if (err) {
+          res.writeHead(err.status, {'Content-Type': 'application/json' });
+          return next();
+        }
         res.writeHead(200, {'Content-Type': 'application/json' });
-        res.write(JSON.stringify({
+        res.bundle = JSON.stringify({
           athirdroute: "called",
           object: obj
-        }));
-        res.end();
+        });
+        next();
       },
       methods: ['get', 'post'],
       detail: true,
