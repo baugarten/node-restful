@@ -116,7 +116,7 @@ exports.register = function(app) {
       year: 2013
   }];
   movie = new restful.Model(moviemodel);
-  movie.register(app);
+  movie.register(app, '/api/movies');
   movie.spies = spies;
   movies.forEach(function(movieopts) {
     var obj = new movie.Obj(movieopts);

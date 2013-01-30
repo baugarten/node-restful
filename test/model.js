@@ -21,12 +21,6 @@ describe('Model', function() {
     user1 = config.users[0];
     user2 = config.users[1];
   });
-  describe('instantiation', function() {
-    it('should inherit from EventEmitter', function(done) {
-      movies.on('foo', done);
-      movies.emit('foo');
-    });
-  });
   describe('.dispatch', function() {
     
     it('should dispatch to GET', function(done) {

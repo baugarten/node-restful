@@ -1,13 +1,11 @@
-var restful = require('../lib/restful'),
-    mongoose = require('mongoose');
+var express = require('express'),
+    mongoose = require('mongoose'),
+    restful = require('../');
+var app = express();
 
+mongoose.connect("mongodb://localhost/express");
 
-var app = restful({
-  hostname: 'localhost',
-  port: 27017,
-  db: 'dev', 
-});
-app.register({
+var user = new restful.Model({
   title: "users",
   methods: ['get', 'post', 'put', 'delete'],
   schema: mongoose.Schema({
@@ -16,9 +14,10 @@ app.register({
   }),
   delete: {
     sort: false
-  } 
+  }
 });
-app.register({
+
+var movie = new restful.Model({
   title: "movies",
   methods: ['get', 'post', 'put', 'delete'],
   schema: mongoose.Schema({
@@ -64,23 +63,8 @@ app.register({
         }
   },
 });
-app.register({
-  title: "reviews",
-  parent: "movies",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
-    title: 'string',
-    year: 'number', 
-  }),
-});
-app.register({
-  title: "likes",
-  parent: "reviews",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
-    title: 'string',
-    year: 'number', 
-  }),
-});
+
+user.register(app);
+movie.register(app);
 
 app.listen(3000);
