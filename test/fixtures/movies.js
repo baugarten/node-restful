@@ -1,4 +1,5 @@
 var users = require('./users'),
+    restful = require('../../'),
     mongoose = require('mongoose'),
     sinon = require('sinon'),
     movie,
@@ -108,7 +109,8 @@ exports.register = function(app) {
     title: "Title3",
       year: 2013
   }];
-  movie = app.register(moviemodel);
+  movie = new restful.Model(moviemodel);
+  movie.register(app);
   movie.spies = spies;
   movies.forEach(function(movieopts) {
     var obj = new movie.Obj(movieopts);

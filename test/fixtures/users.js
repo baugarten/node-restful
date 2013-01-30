@@ -1,3 +1,4 @@
+var restful = require('../../')
 var mongoose = require('mongoose'),
     user,
     userobjs = [],
@@ -22,8 +23,8 @@ exports.register = function(app) {
         pass_hash: 1237987381263189273123,
       }],
       userobjs = [];
-    
-  user = app.register(opts);
+  user = new restful.Model(opts); 
+  user.register(app);
   users.forEach(function(useropts) {
     var obj = new user.Obj(useropts);
     obj.save();
