@@ -7,6 +7,7 @@
     "mongoose": "3.5.4"
   },
   "devDependencies": {
+    "express": "3.1.0",
     "mocha": "1.8.1",
     "should": "1.2.1",
     "supertest": "0.5.1",
