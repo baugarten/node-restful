@@ -1,5 +1,4 @@
 var express = require('express'),
-    connect = require('connect'),
     mongoose = require('mongoose'),
     moviesfix = require('./movies'),
     usersfix = require('./users'),
@@ -9,7 +8,7 @@ var express = require('express'),
     app;
 
 exports.app = app = express();
-app.use(connect.bodyParser());
+app.use(express.bodyParser());
 mongoose.connect('mongodb://localhost/unittest');
 
 userparams = usersfix.register(app);
