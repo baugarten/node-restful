@@ -9,6 +9,7 @@ describe('handlers', function() {
       res = {};
       res.send = function() {};
       res.end = function() {};
+      res.writeHeader = function() {};
     });
     beforeEach(function() {
       get = function(req, res, next) {

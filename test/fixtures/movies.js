@@ -60,33 +60,32 @@ var moviemodel = {
   },
   routes: {
     recommend: function(req, res, next) {
-      res.writeHead(200, {'Content-Type': 'application/json' });
-      res.bundle = JSON.stringify({
+      res.status = 200;
+      res.bundle = {
         recommend: "called",
-      });
+      }
       next();
     },
     anotherroute: {
       handler: function(req, res, next) {
-        res.writeHead(200, {'Content-Type': 'application/json' });
-        res.bundle = JSON.stringify({
+        res.status = 200;
+        res.bundle = {
           anotherroute: "called",
-        });
+        }
         next();
       },
     },
     athirdroute: {
       handler: function(req, res, next, err, obj) {
         if (err) {
-          res.writeHead(err.status, {'Content-Type': 'application/json' });
-          return next();
+          return next(err);
         }
-        res.writeHead(200, {'Content-Type': 'application/json' });
-        res.bundle = JSON.stringify({
+        res.status = 200;
+        res.bundle = {
           athirdroute: "called",
           object: obj
-        });
-        next();
+        }
+        return next();
       },
       methods: ['get', 'post'],
       detail: true,

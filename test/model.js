@@ -1,6 +1,7 @@
 var should = require('should'),
     request = require('supertest'),
-    config = require('./fixtures/config');
+    config = require('./fixtures/config'),
+    sinon = require('sinon');
 
 describe('Model', function() {
   var movies, 
@@ -36,13 +37,19 @@ describe('Model', function() {
         .expect(400, done)
     });
     it('should POST with data', function(done) {
+      var spied = movies.routes['post'] = sinon.spy(movies.routes['post']);
+      var before = spied.callCount;
       request(app)
         .post('/api/movies')
         .send({
           title: "A very stupid movie",  
         })
         .expect('Content-Type', /json/)
-        .expect(201, done)
+        .expect(201 )
+        .end(function(err, res) {
+          spied.callCount.should.equal(before + 1);
+          done();
+        });
     });
     it('should fail on PUT without filter on unsortable model', function(done) {
       request(app)
