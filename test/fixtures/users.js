@@ -26,7 +26,7 @@ exports.register = function(app) {
   user = new restful.Model(opts); 
   user.register(app, '/users');
   users.forEach(function(useropts) {
-    var obj = new user.Obj(useropts);
+    var obj = new user.Model(useropts);
     obj.save();
     userobjs.push(obj);
   });

@@ -118,7 +118,7 @@ exports.register = function(app) {
   movie.register(app, '/api/movies');
   movie.spies = spies;
   movies.forEach(function(movieopts) {
-    var obj = new movie.Obj(movieopts);
+    var obj = new movie.Model(movieopts);
     obj.save();
     movieobjs.push(obj);
   });
