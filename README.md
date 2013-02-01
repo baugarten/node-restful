@@ -7,8 +7,6 @@ Create awesome APIs using express.
 
 Register mongoose resources and default RESTful routes are automatically made
 
-Based on express
-
 ```js
 var express = require('express'),
     mongoose = require('mongoose'),
@@ -31,6 +29,10 @@ app.listen(3000);
 
 ## Usage
 
+There is a good example application under examples/notes.
+
+I will also show some features and use cases for them, how to set up routes, etc.
+
 RESTful routes are automatically generated at the registration point. In the above examples, the routes generated are:
 ```
 GET /movies
@@ -49,7 +51,7 @@ var movies = new restful.Model({
       // change request data through req.body.property = [val]
       // Do whatever you need to
       // but be sure to call
-      next(); // This invokes the normal handler
+      next(); // This calls the normal handler, needs to be called in every before/after/handler
     },
     after: function(req, res, next) {... ; next() } // Or an after handler
   }];
@@ -87,8 +89,21 @@ var movies = new restful.Model({
 });
 ```
 
+You can also add the same routes by doing
+```js
+moves.userroute({
+  search: ...,
+  similar: ...,
+});
+```
+
 ### Model
 Important functions:
+```js
+Model#new(properties)
+```
+Makes a new instance of a particular model with the given properties. Returns a [mongoose model](http://mongoosejs.com/docs/api.html#model-js) instance.
+
 ```js
 Model#userroute(route, fn)
 ```
