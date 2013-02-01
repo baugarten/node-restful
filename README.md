@@ -26,6 +26,11 @@ app.register(movies, '/movies');
 
 app.listen(3000);
 ```
+## Install
+
+```
+npm install node-restful
+```
 
 ## Usage
 
