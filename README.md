@@ -34,6 +34,8 @@ npm install node-restful
 
 ## Usage
 
+Here is a [tutorial](benaugarten.com/blog/2013/01/31/restful-a-better-rest-api-using-node-dot-js-with-express/) on how to use Restful
+
 There is a good example application under examples/notes.
 
 I will also show some features and use cases for them, how to set up routes, etc.
