@@ -23,13 +23,13 @@ describe('handlers', function() {
     });
     it('should wrap a fn at GET', function() {
       spiedget.called.should.be.false;
-      var wrapped = handlers.wrap('get', spiedget);
+      var wrapped = handlers.wrap(spiedget);
       wrapped({}, res);
       spiedget.called.should.be.true;
     });
     it('should call a before route on get', function() {
       spiedget.called.should.be.false;
-      var wrapped = handlers.wrap('get', { before: spiedbefore, handler: spiedget });
+      var wrapped = handlers.wrap({ before: spiedbefore, handler: spiedget });
       wrapped({}, res);
       spiedget.called.should.be.true;
       spiedbefore.called.should.be.true;
