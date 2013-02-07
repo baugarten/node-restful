@@ -29,7 +29,7 @@ describe('handlers', function() {
     });
     it('should call a before route on get', function() {
       spiedget.called.should.be.false;
-      var wrapped = handlers.wrap('get', { before: spiedbefore, fn: spiedget });
+      var wrapped = handlers.wrap('get', { before: spiedbefore, handler: spiedget });
       wrapped({}, res);
       spiedget.called.should.be.true;
       spiedbefore.called.should.be.true;
