@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Node-restful by baugarten</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Node-restful</h1>
+          <h2>A restful server for quickly providing a data api</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/baugarten/node-restful/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/baugarten/node-restful/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/baugarten/node-restful" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <p><a href="http://travis-ci.org/baugarten/node-restful"><img src="https://secure.travis-ci.org/baugarten/node-restful.png?branch=master" alt="build status"></a></p>
+
+<h1>node-restful</h1>
+
+<p>Create awesome APIs using express.</p>
+
+<p>Register mongoose resources and default RESTful routes are automatically made</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">express</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'express'</span><span class="p">),</span>
+    <span class="nx">restful</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'node-restful'</span><span class="p">),</span>
+    <span class="nx">mongoose</span> <span class="o">=</span> <span class="nx">restful</span><span class="p">.</span><span class="nx">mongoose</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">app</span> <span class="o">=</span> <span class="nx">restful</span><span class="p">();</span>
+
+<span class="kd">var</span> <span class="nx">movies</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">restful</span><span class="p">.</span><span class="nx">Model</span><span class="p">({</span>
+  <span class="nx">title</span><span class="o">:</span> <span class="s2">"movies"</span><span class="p">,</span>
+  <span class="nx">methods</span><span class="o">:</span> <span class="p">[</span><span class="s1">'get'</span><span class="p">,</span> <span class="s1">'post'</span><span class="p">,</span> <span class="s1">'put'</span><span class="p">,</span> <span class="s1">'delete'</span><span class="p">],</span>
+  <span class="nx">schema</span><span class="o">:</span> <span class="nx">mongoose</span><span class="p">.</span><span class="nx">Schema</span><span class="p">({</span>
+    <span class="nx">title</span><span class="o">:</span> <span class="s1">'string'</span><span class="p">,</span>
+    <span class="nx">year</span><span class="o">:</span> <span class="s1">'number'</span><span class="p">,</span>
+  <span class="p">}),</span>
+<span class="p">});</span> 
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">register</span><span class="p">(</span><span class="nx">movies</span><span class="p">,</span> <span class="s1">'/movies'</span><span class="p">);</span>
+
+<span class="nx">app</span><span class="p">.</span><span class="nx">listen</span><span class="p">(</span><span class="mi">3000</span><span class="p">);</span>
+</pre></div>
+
+<h2>Install</h2>
+
+<pre><code>npm install node-restful
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Here is a <a href="benaugarten.com/blog/2013/01/31/restful-a-better-rest-api-using-node-dot-js-with-express/">tutorial</a> on how to use Restful</p>
+
+<p>There is a good example application under examples/notes.</p>
+
+<p>I will also show some features and use cases for them, how to set up routes, etc.</p>
+
+<p>RESTful routes are automatically generated at the registration point. In the above examples, the routes generated are:</p>
+
+<pre><code>GET /movies
+POST /movies
+PUT /movies/:id
+DELETE /movies/:id
+</code></pre>
+
+<h3>Methods</h3>
+
+<p>If we need code to execute before a particular method (say we need to fill in POST data beforehand), we can register a before post handler:</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">movies</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">restful</span><span class="p">.</span><span class="nx">Model</span><span class="p">({</span>
+  <span class="nx">methods</span><span class="o">:</span> <span class="p">[</span><span class="s1">'get'</span><span class="p">,</span> <span class="s1">'put'</span><span class="p">,</span> <span class="s1">'delete'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="nx">type</span><span class="o">:</span> <span class="s1">'post'</span><span class="p">,</span>
+    <span class="nx">before</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// change request data through req.body.property = [val]</span>
+      <span class="c1">// Do whatever you need to</span>
+      <span class="c1">// but be sure to call</span>
+      <span class="nx">next</span><span class="p">();</span> <span class="c1">// This calls the normal handler, needs to be called in every before/after/handler</span>
+    <span class="p">},</span>
+    <span class="nx">after</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{...</span> <span class="p">;</span> <span class="nx">next</span><span class="p">()</span> <span class="p">}</span> <span class="c1">// Or an after handler</span>
+  <span class="p">}];</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>Custom Routing</h3>
+
+<p>If we need to expose a custom resource route, lets say we want to have a search route on movies, its easy to add. Likewise, if you want to add a route that operates on a single instance (i.e. /movies/:id/route) then set the detail flag to true. </p>
+
+<p>The keys to routes are the route names. The values are either functions (last examples) or objects that specify handlers and several other properties.</p>
+
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">movies</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">restful</span><span class="p">.</span><span class="nx">Model</span><span class="p">({</span>
+  <span class="nx">routes</span><span class="o">:</span> <span class="p">{</span>
+    <span class="nx">search</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">handler</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// preform a search</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="mi">200</span> <span class="c1">// the return status code</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">bundle</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">// Whatever data you want to return, custom serialization methods soon to come</span>
+        <span class="nx">next</span><span class="p">();</span> <span class="c1">// Then pass up control</span>
+      <span class="p">},</span>
+      <span class="nx">methods</span><span class="o">:</span> <span class="p">[</span><span class="s1">'get'</span><span class="p">],</span> <span class="c1">// only respond to GET requests</span>
+      <span class="nx">detail</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="c1">// false by default, this operates on the collection of movies, /movies/search</span>
+    <span class="p">},</span>
+    <span class="nx">similar</span><span class="o">:</span> <span class="p">{</span>
+      <span class="nx">handler</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">movie</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// get similar movies</span>
+        <span class="nx">next</span><span class="p">();</span>
+      <span class="p">},</span>
+      <span class="nx">detail</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// this is a detial endpoint, which operates on ONE movie, /movies/:id/similar</span>
+      <span class="nx">methods</span><span class="o">:</span> <span class="p">[</span><span class="s1">'get'</span><span class="p">],</span>
+    <span class="p">},</span>
+    <span class="nx">anotherroute</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">req</span><span class="p">,</span> <span class="nx">res</span><span class="p">,</span> <span class="nx">next</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">;</span> <span class="nx">next</span><span class="p">()</span> <span class="p">}</span> <span class="c1">// All methods, /movies/anotherroute</span>
+  <span class="p">},</span>
+<span class="p">});</span>
+</pre></div>
+
+<p>You can also add the same routes by doing</p>
+
+<div class="highlight"><pre><span class="nx">moves</span><span class="p">.</span><span class="nx">userroute</span><span class="p">({</span>
+  <span class="nx">search</span><span class="o">:</span> <span class="p">...,</span>
+  <span class="nx">similar</span><span class="o">:</span> <span class="p">...,</span>
+<span class="p">});</span>
+</pre></div>
+
+<h3>Model</h3>
+
+<p>Important functions:</p>
+
+<div class="highlight"><pre><span class="nx">Model</span><span class="err">#</span><span class="k">new</span><span class="p">(</span><span class="nx">properties</span><span class="p">)</span>
+</pre></div>
+
+<p>Makes a new instance of a particular model with the given properties. Returns a <a href="http://mongoosejs.com/docs/api.html#model-js">mongoose model</a> instance.</p>
+
+<div class="highlight"><pre><span class="nx">Model</span><span class="err">#</span><span class="nx">userroute</span><span class="p">(</span><span class="nx">route</span><span class="p">,</span> <span class="nx">fn</span><span class="p">)</span>
+</pre></div>
+
+<p>Takes a route, like 'search', 'similar' or a period delimited route i.e. 'search.similar' and a function like the ones above or an object like the ones above in custom routing. It then registers the custom route at the specified endpoint. If its a detail route then it will be prefixed by '/movies/:id/', otherwise by '/movies/'. If the route has periods or slashes, then the route will be nested, i.e. if 'search.similar' is a detail route, then its endpoint would be '/movies/:id/search/similar'</p>
+
+<div class="highlight"><pre><span class="nx">Model</span><span class="err">#</span><span class="nx">Model</span>
+</pre></div>
+
+<p>Returns the underlying <a href="http://mongoosejs.com/docs/api.html#model-js">mongoose model</a></p>
+
+<div class="highlight"><pre><span class="nx">Model</span><span class="err">#</span><span class="nx">register</span><span class="p">(</span><span class="nx">app</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span>
+</pre></div>
+
+<p>Registers this model to the app at the given url</p>
+
+<h3>Other functions</h3>
+
+<p>There are also several other functions that are exposed through restful.</p>
+
+<div class="highlight"><pre><span class="nx">restful</span><span class="p">.</span><span class="nx">respond404</span><span class="p">()</span>
+</pre></div>
+
+<p>Returns a JSON error response for a 404 message</p>
+
+<div class="highlight"><pre><span class="nx">restful</span><span class="p">.</span><span class="nx">objectNotFound</span><span class="p">()</span>
+</pre></div>
+
+<p>Returns a JSON error response for a 404 message because we couldn't find the object specified</p>
+
+<div class="highlight"><pre><span class="nx">restful</span><span class="p">.</span><span class="nx">multipleObjectsFound</span><span class="p">()</span>
+</pre></div>
+
+<p>Returns a JSON error response for a 404 message because we found too many objects on a detail route</p>
+
+<h2>Contributing</h2>
+
+<p>Is always welcome, just reach out to <a href="https://github.com/baugarten">me</a></p>
+
+<h2>MIT License</h2>
+
+<p>Copyright (c) 2012 by Ben Augarten</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.</p>
+        </section>
+
+        <footer>
+          Node-restful is maintained by <a href="https://github.com/baugarten">baugarten</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="http://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+        
+      </div>
+    </div>
+  </body>
+</html>
