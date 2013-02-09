@@ -9,7 +9,7 @@ var express = require('express'),
 
 exports.app = app = express();
 app.use(express.bodyParser());
-mongoose.connect('mongodb://localhost/unittest');
+mongoose.connect('mongodb://localhost/unittest2');
 
 userparams = usersfix.register(app);
 movieparams = moviesfix.register(app);

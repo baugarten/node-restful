@@ -89,7 +89,21 @@ var moviemodel = {
       },
       methods: ['get', 'post'],
       detail: true,
-    }
+    },
+    fakeget: function(req, res, next) {
+      this.handle('get', function(data) {
+        res.writeHeader(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify(data));
+        res.end();
+      });
+    },
+    fakepost: function(req, res, next) {
+      this.handle('post', [], req.body, function(data) {
+        res.writeHeader(200, { 'Content-Type': 'application/json' });
+        res.write(JSON.stringify(data));
+        res.end();
+      });
+    },
   },
   version: "api",
 }
