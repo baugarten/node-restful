@@ -28,8 +28,35 @@ describe('Model', function() {
       template.should.equal('index');
     });
     it('should work for getDetail', function() {
-      var template = movies.template(['get'], [{ _id: 'ad' }]);
+      var template = movies.template(['get'], [{ key: '_id', value: 'ad' }]);
       template.should.equal('show');
+    });
+  });
+  describe('format=html', function() {
+    it('should render index', function(done) {
+      request(app)
+        .get('/api/movies?format=html')
+        .expect('Content-Type', /html/)
+        .end(function(err, res) {
+          res.text.should.match(/index/);
+          res.text.should.match(new RegExp(movie1.title));
+          res.text.should.match(new RegExp(movie2.title));
+          res.text.should.match(new RegExp(movie3.title));
+          done();
+        });
+    });
+    it('should render show', function(done) {
+      request(app)
+        .get('/api/movies/' + movie1._id + '/?format=html')
+        .expect('Content-Type', /html/)
+        .end(function(err, res) {
+          res.text.should.match(/show/);
+          res.text.should.match(new RegExp(movie1.title));
+          res.text.should.not.match(new RegExp(movie2.title));
+          res.text.should.not.match(new RegExp(movie3.title));
+          done();
+        });
+
     });
   });
 });
