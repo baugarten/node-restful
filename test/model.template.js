@@ -1,0 +1,35 @@
+var should = require('should'),
+    request = require('supertest'),
+    config = require('./fixtures/config'),
+    sinon = require('sinon');
+
+describe('Model', function() {
+  var movies,
+      users,
+      app,
+      movie1,
+      movie2,
+      movie3,
+      user1,
+      user2;
+  before(function() {
+    app = config.app;
+    movies = config.movie;
+    users = config.user;
+    movie1 = config.movies[0];
+    movie2 = config.movies[1];
+    movie3 = config.movies[2];
+    user1 = config.users[0];
+    user2 = config.users[1];
+  });
+  describe('.template(route, filters)', function() {
+    it('should work for get', function() {
+      var template = movies.template(['get'], []);
+      template.should.equal('index');
+    });
+    it('should work for getDetail', function() {
+      var template = movies.template(['get'], [{ _id: 'ad' }]);
+      template.should.equal('show');
+    });
+  });
+});
