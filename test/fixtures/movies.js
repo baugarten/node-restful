@@ -23,6 +23,7 @@ var users = require('./users'),
 
 var moviemodel = {
   title: "movies",
+  template: __dirname + '/movies/',
   methods: [
     {
       type: 'get',
