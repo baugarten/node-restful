@@ -64,7 +64,7 @@ var movie = new restful.Model({
   },
 });
 
-user.register(app);
-movie.register(app);
+user.register(app, '/users');
+movie.register(app, '/movies');
 
 app.listen(3000);
