@@ -8,7 +8,11 @@ var express = require('express'),
     app;
 
 exports.app = app = express();
+
 app.use(express.bodyParser());
+app.use(express.query());
+
+app.set('view engine', 'jade');
 mongoose.connect('mongodb://localhost/unittest2');
 
 userparams = usersfix.register(app);
