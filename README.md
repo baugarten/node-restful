@@ -11,7 +11,7 @@ Register mongoose resources and default RESTful routes are automatically made
 var express = require('express'),
     restful = require('node-restful'),
     mongoose = restful.mongoose;
-var app = restful();
+var app = express();
 
 var movies = new restful.Model({
   title: "movies",
@@ -22,7 +22,7 @@ var movies = new restful.Model({
   }),
 }); 
 
-app.register(movies, '/movies');
+movies.register(app, '/movies');
 
 app.listen(3000);
 ```
