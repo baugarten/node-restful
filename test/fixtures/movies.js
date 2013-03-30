@@ -128,7 +128,7 @@ exports.register = function(app) {
   Movie = restful.model('movies', moviemodel.schema)
     .methods(moviemodel.methods)
     .template(moviemodel.template)
-    .userroute(moviemodel.routes);
+    .route(moviemodel.routes);
   Movie.register(app, '/api/movies');
   Movie.spies = spies;
   movies.forEach(function(movieopts) {
