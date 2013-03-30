@@ -21,3 +21,9 @@ test-cov: lib-cov
 
 lib-cov:
 	@jscoverage lib lib-cov
+
+clean:
+	rm -f coverage.html
+	rm -rf lib-cov
+
+.PHONY: test test-unit clean
