@@ -3,7 +3,7 @@ var should = require('should'),
     config = require('./fixtures/config'),
     sinon = require('sinon');
 
-describe('Model', function() {
+describe.skip('Model', function() {
   var movies,
       users,
       app,
