@@ -2,7 +2,7 @@ var users = require('./users'),
     restful = require('../../'),
     mongoose = require('mongoose'),
     sinon = require('sinon'),
-    movie,
+    Movie,
     movieobjs = [],
     before = function(req, res, next) { next(); },
     after = function(req, res, next) { next(); },
@@ -26,22 +26,21 @@ var moviemodel = {
   template: __dirname + '/movies/',
   methods: [
     {
-      type: 'get',
+      method: 'get',
       before: spies.get.before,
       after: spies.get.after,
     },
     {
-      type: 'post',
+      method: 'post',
       before: spies.post.before,
       after: spies.post.after,
     },
     {
-      type: 'put',
+      method: 'put',
       before: spies.put.before,
       after: spies.put.after,
     },
   ],
-  excludes: ['secret'],
   schema: mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number' },
@@ -125,18 +124,22 @@ exports.register = function(app) {
     title: "Title3",
       year: 2013
   }];
-  movie = new restful.Model(moviemodel);
-  movie.register(app, '/api/movies');
-  movie.spies = spies;
+  console.log(moviemodel.template);
+  Movie = restful.model('movies', moviemodel.schema)
+    .methods(moviemodel.methods)
+    .template(moviemodel.template)
+    .userroute(moviemodel.routes);
+  Movie.register(app, '/api/movies');
+  Movie.spies = spies;
   movies.forEach(function(movieopts) {
-    var obj = new movie.Model(movieopts);
+    var obj = new Movie(movieopts);
     obj.save();
     movieobjs.push(obj);
   });
-  exports.movie = movie;
+  exports.movie = Movie;
   exports.movies = movieobjs;
   return exports
 }
 
-exports.movie = movie;
+exports.movie = Movie;
 exports.movies = movieobjs;

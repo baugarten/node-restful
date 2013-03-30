@@ -23,10 +23,11 @@ exports.register = function(app) {
         pass_hash: 1237987381263189273123,
       }],
       userobjs = [];
-  User = new restful.Model(opts); 
+  User = restful.model("users", opts.schema)
+    .methods(opts.methods);
   User.register(app, '/users');
   users.forEach(function(useropts) {
-    var obj = User.new(useropts);
+    var obj = new User(useropts);
     obj.save();
     userobjs.push(obj);
   });

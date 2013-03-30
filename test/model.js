@@ -12,7 +12,7 @@ should.Assertion.prototype.a = function(type, desc) {
         function(){ return 'expected ' + this.inspect + ' not to be a ' + type  + (desc ? " | " + desc : ""); });
     return this;
   }
-  return oldA(type, desc);
+  return oldA.call(this, type, desc);
 };
 
 describe('Model', function() {

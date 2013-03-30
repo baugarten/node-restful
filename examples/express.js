@@ -7,22 +7,16 @@ app.use(express.bodyParser());
 
 mongoose.connect("mongodb://localhost/express");
 
-var user = new restful.Model({
-  title: "users",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
+var user = restful.model('users', mongoose.Schema({
     username: { type: 'string', required: true },
     pass_hash: { type: 'number', required: true },
-  }),
-  delete: {
+  }))
+  .methods(['get', 'post', 'put', 'delete'])
+  .delete({
     sort: false
-  }
-});
+  });
 
-var movie = new restful.Model({
-  title: "movies",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
+var movie = restful.model("movies", mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number', required: true },
     creator: {type: 'ObjectId', ref: 'users' },
@@ -34,8 +28,9 @@ var movie = new restful.Model({
       productionco: 'string',
       director: 'string',
     },
-  }),
-  routes: {
+  }))
+  .methods(['get', 'post', 'put', 'delete'])
+  .userroute({
     recommend: function(req, res, next) {
       res.writeHead(200, {'Content-Type': 'application/json' });
       res.write(JSON.stringify({
@@ -64,8 +59,7 @@ var movie = new restful.Model({
       methods: ['get', 'post'],
       detail: true,
         }
-  },
-});
+  });
 
 user.register(app, '/users');
 movie.register(app, '/movies');
