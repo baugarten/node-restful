@@ -3,6 +3,8 @@ var express = require('express'),
     restful = require('../');
 var app = express();
 
+app.use(express.bodyParser());
+
 mongoose.connect("mongodb://localhost/express");
 
 var user = new restful.Model({
@@ -50,13 +52,14 @@ var movie = new restful.Model({
       },
     },
     athirdroute: {
-      handler: function(req, res, next, err, obj) {
-        res.writeHead(200, {'Content-Type': 'application/json' });
-        res.write(JSON.stringify({
+      handler: function(req, res, next) {
+        console.log("athirdroute");
+        res.status_code = 200;
+        res.bundle = {
           athirdroute: "called",
-          object: obj
-        }));
-        res.end();
+        };
+        console.log("Done athirdroute");
+        next();
       },
       methods: ['get', 'post'],
       detail: true,

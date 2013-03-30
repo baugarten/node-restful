@@ -1,7 +1,19 @@
 var should = require('should'),
     request = require('supertest'),
     config = require('./fixtures/config'),
-    sinon = require('sinon');
+    sinon = require('sinon'),
+    checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+
+var oldA = should.Assertion.prototype.a;
+should.Assertion.prototype.a = function(type, desc) {
+  if (type === '_id') {
+    this.assert(checkForHexRegExp.test(this.obj),
+        function() { return 'expected ' + this.inspect + ' to be a ' + type + (desc ? " | " + desc : ""); },
+        function(){ return 'expected ' + this.inspect + ' not to be a ' + type  + (desc ? " | " + desc : ""); });
+    return this;
+  }
+  return oldA(type, desc);
+};
 
 describe('Model', function() {
   var movies, 
@@ -28,26 +40,25 @@ describe('Model', function() {
       request(app)
         .get('/api/movies')
         .expect('Content-Type', /json/)
-        .expect(200, done)
+        .expect(200, done);
     }); 
     it('should fail POST with no data', function(done) {
       request(app)
         .post('/api/movies')
         .expect('Content-Type', /json/)
-        .expect(400, done)
+        .expect(400, done);
     });
     it('should POST with data', function(done) {
-      var spied = movies.routes['post'] = sinon.spy(movies.routes['post']);
-      var before = spied.callCount;
       request(app)
         .post('/api/movies')
         .send({
-          title: "A very stupid movie",  
+          title: "A very stupid movie"
         })
         .expect('Content-Type', /json/)
         .expect(201 )
         .end(function(err, res) {
-          spied.callCount.should.equal(before + 1);
+          res.body.title.should.equal('A very stupid movie');
+          res.body._id.should.a('_id');
           done();
         });
     });
@@ -55,24 +66,21 @@ describe('Model', function() {
       request(app)
         .put('/api/movies')
         .send({
-          title: "A very stupid movie",  
+          title: "A very stupid movie"
         })
-        .expect('Content-Type', /json/)
-        .expect(404, done)
+        .expect(404, done);
     });
     it('should fail on DELETE without a filter', function(done) {
       request(app)
         .del('/users')
-        .expect('Content-Type', /json/)
-        .expect(404, done)
+        .expect(404, done);
     });
     it('should 404 on undefined route', function(done) {
       request(app)
         .del('/api/movies')
-        .expect('Content-Type', /json/)
-        .expect(404, done)
+        .expect(404, done);
     });
-    it('should return a nested model at the generated endpoint', function(done) {
+    it('should return a nested model at the generated endpoint creator', function(done) {
       request(app)
         .get('/api/movies/' + movie1._id + '/creator')
         .expect('Content-Type', /json/)
@@ -88,7 +96,6 @@ describe('Model', function() {
     it('should 404 if we request an object endpoint without a filter', function(done) {
       request(app)
         .get('/api/movies/creator')
-        .expect('Content-Type', /json/)
         .expect(404, done);
     });
     it('should retrieve a deeply nested endpoint', function(done) {
@@ -107,7 +114,6 @@ describe('Model', function() {
     it('should 404 on a nested object', function(done) {
       request(app)
         .get('/api/movies/' + movie1._id + '/meta')
-        .expect('Content-Type', /json/)
         .expect(404, done)
     });
     it('should get a user defined route', function(done) {
@@ -140,20 +146,17 @@ describe('Model', function() {
         .end(function(err, res) {
           res.should.be.json;
           res.body.athirdroute.should.equal("called");
-          res.body.object._id.should.equal(String(movie1._id));
           done();
         });
     });
     it('should fail athirdroute (user defined route)', function(done) {
       request(app)
         .get('/api/movies/athirdroute')
-        .expect('Content-Type', /json/)
         .expect(404, done);
     });
     it('should fail athirdroute (user defined route)', function(done) {
       request(app)
         .put('/api/movies/athirdroute')
-        .expect('Content-Type', /json/)
         .expect(404, done);
     });
   });

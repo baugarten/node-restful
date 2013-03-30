@@ -5,7 +5,7 @@ var users = require('./users'),
     movie,
     movieobjs = [],
     before = function(req, res, next) { next(); },
-    after = function(req, res, next, err, model) { next(); },
+    after = function(req, res, next) { next(); },
     spies = {
       get: {
         before: sinon.spy(before),
@@ -61,15 +61,15 @@ var moviemodel = {
   },
   routes: {
     recommend: function(req, res, next) {
-      res.status = 200;
+      res.status_code = 200;
       res.bundle = {
-        recommend: "called",
+        recommend: "called"
       }
       next();
     },
     anotherroute: {
       handler: function(req, res, next) {
-        res.status = 200;
+        res.status_code = 200;
         res.bundle = {
           anotherroute: "called",
         }
@@ -77,32 +77,28 @@ var moviemodel = {
       },
     },
     athirdroute: {
-      handler: function(req, res, next, err, obj) {
-        if (err) {
-          return next(err);
-        }
-        res.status = 200;
+      handler: function(req, res, next) {
+        res.status_code = 200;
         res.bundle = {
-          athirdroute: "called",
-          object: obj
-        }
+          athirdroute: "called"
+        };
         return next();
       },
       methods: ['get', 'post'],
-      detail: true,
+      detail: true
     },
     fakeget: function(req, res, next) {
       this.handle('get', function(data) {
-        res.writeHeader(200, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify(data));
-        res.end();
+        this.status_code = 200;
+        this.bundle = data;
+        next();
       });
     },
     fakepost: function(req, res, next) {
       this.handle('post', [], req.body, function(data) {
-        res.writeHeader(200, { 'Content-Type': 'application/json' });
-        res.write(JSON.stringify(data));
-        res.end();
+        this.status_code = 200;
+        this.bundle = data;
+        next();
       });
     },
   },

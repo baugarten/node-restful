@@ -13,6 +13,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/' + config.movies[0]._id + '/')
         .end(function(err, res) {
+          console.log(res.body);
           res.body.should.not.have.property('secret');
           done();
         });
