@@ -24,15 +24,18 @@ describe('Model', function() {
       movie3, 
       user1, 
       user2;
-  before(function() {
-    app = config.app;
-    movies = config.movie;
-    users = config.user;
-    movie1 = config.movies[0];
-    movie2 = config.movies[1];
-    movie3 = config.movies[2];
-    user1 = config.users[0];
-    user2 = config.users[1];
+  before(function(done) {
+    config.ready(function() {
+      app = config.app;
+      movies = config.movie;
+      users = config.user;
+      movie1 = config.movies[0];
+      movie2 = config.movies[1];
+      movie3 = config.movies[2];
+      user1 = config.users[0];
+      user2 = config.users[1];
+      done();
+    });
   });
   describe('.dispatch', function() {
     
@@ -52,7 +55,8 @@ describe('Model', function() {
       request(app)
         .post('/api/movies')
         .send({
-          title: "A very stupid movie"
+          title: "A very stupid movie",
+          year: "214243"
         })
         .expect('Content-Type', /json/)
         .expect(201 )
