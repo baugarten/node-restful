@@ -1,12 +1,9 @@
 var express = require('express'),
     fixtures = require('mongoose-fixtures'),
-    mongoose = require('mongoose'),
-    moviesfix = require('./movies'),
-    usersfix = require('./users'),
-    restful = require('../../'),
     app = require('../../examples/movies/'),
     data = require('./data'),
     done = false,
+    mongoose,
     callback;
 
 
@@ -26,9 +23,6 @@ fixtures.load(data, mongoose.connection, function(err) {
   });
 });
 
-
-//exports.app = app = express();
-
 exports.movies = data.movies;
 exports.users = data.users;
 
@@ -36,19 +30,3 @@ exports.ready = function(cb) {
   callback = cb; 
   if (done) callback();
 };
-
-/*
-app.use(express.bodyParser());
-app.use(express.query());
-
-app.set('view engine', 'jade');
-mongoose.connect('mongodb://localhost/unittest2');
-
-userparams = usersfix.register(app);
-movieparams = moviesfix.register(app);
-
-exports.movies = movieparams.movies;
-exports.users = userparams.users;
-exports.movie = movieparams.movie;
-exports.user = userparams.user;
-*/
