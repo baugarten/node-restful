@@ -124,6 +124,27 @@ describe('Model', function() {
           });
         });
     });
+    it("shouldn't put data on deleted resource", function(done) {
+      request(app)
+        .del('/api/movies/' + config.movies[5]._id)
+        .end(function(err, res) {
+          request(app)
+            .put('/api/movies/' + config.movies[5]._id)
+            .send({
+              title: 'But I already deleted you'
+            })
+          .expect(400, done);
+        });
+    });
+    it('should 400 deleting a resource twice', function(done) {
+      request(app)
+        .del('/api/movies/' + config.movies[6]._id)
+        .end(function() {
+          request(app)
+            .del('/api/movies/' + config.movies[6]._id)
+            .expect(400, done);
+        });
+    });
     it('should 404 on undefined route', function(done) {
       request(app)
         .del('/api/movies')
