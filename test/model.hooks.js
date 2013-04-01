@@ -22,5 +22,23 @@ describe('Model', function() {
       movie.routes.put.before.length.should.equal(1);
       movie.routes.put.after.length.should.equal(1);
     });
+    it('should call after all hook on user defined all route', function(done) {
+      request(app)
+        .get('/api/movies/recommend')
+        .end(function(err, res) {
+          res.body.recommend.should.equal('called');
+          res.body.after.should.equal('called');
+          done();
+        });
+    });
+    it('should call before all hook on user defined get route', function(done) {
+      request(app)
+        .get('/api/movies/' + config.movies[2]._id + '/athirdroute')
+        .end(function(err, res) {
+          res.body.athirdroute.should.equal('called');
+          res.body.after.should.equal('called');
+          done();
+        });
+    });
   });
 });
