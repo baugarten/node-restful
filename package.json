@@ -7,7 +7,7 @@
   },
   "devDependencies": {
     "express": "3.1.0",
-    "mongodb": "*",
+    "mongodb": "1.2.14",
     "jade": "0.28.1",
     "mocha": "1.8.1",
     "should": "1.2.1",
