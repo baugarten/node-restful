@@ -13,19 +13,27 @@ var express = require('express'),
     mongoose = restful.mongoose;
 var app = express();
 
-var movies = new restful.Model({
-  title: "movies",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
+var Resource = restful.model('resource', mongoose.Schema({
     title: 'string',
     year: 'number',
-  }),
-}); 
+  })
+  .methods(['get', 'post', 'put', 'delete']);
 
-movies.register(app, '/movies');
+Resource.register(app, '/resources');
 
 app.listen(3000);
 ```
+
+Registers the following routes:
+
+    GET /resources
+    GET /resources/:id
+    POST /resources
+    PUT /resources/:id
+    DELETE /resources/:id
+
+which do exactly what you think they do!
+
 ## Install
 
 ```
@@ -34,121 +42,85 @@ npm install node-restful
 
 ## Usage
 
-Here is a [tutorial](benaugarten.com/blog/2013/01/31/restful-a-better-rest-api-using-node-dot-js-with-express/) on how to use Restful
-
-There is a good example application under examples/notes.
+There is a good example application under examples/movies.
 
 I will also show some features and use cases for them, how to set up routes, etc.
 
-RESTful routes are automatically generated at the registration point. In the above examples, the routes generated are:
-```
-GET /movies
-POST /movies
-PUT /movies/:id
-DELETE /movies/:id
-```
+### API
 
-### Methods
-If we need code to execute before a particular method (say we need to fill in POST data beforehand), we can register a before post handler:
+There are a few functions that are available after we register the mongoose schema. The first one we already saw. 
+
+`.methods([...])` takes a list of methods that should be available on the resource. Future calls to methods will override previously set values
+To disallow `delete` operations, simply run
+
 ```js
-var movies = new restful.Model({
-  methods: ['get', 'put', 'delete', {
-    type: 'post',
-    before: function(req, res, next) {
-      // change request data through req.body.property = [val]
-      // Do whatever you need to
-      // but be sure to call
-      next(); // This calls the normal handler, needs to be called in every before/after/handler
-    },
-    after: function(req, res, next) {... ; next() } // Or an after handler
-  }];
+Resource.methods(['get', 'post', 'put'])
+```
+    
+We can also run custom routes. We can add custom routes by calling `.route(path, handler)`
+
+```js
+Resource.route('recommend', function(req, res, next) {
+  res.send('I have a recommendation for you!');
 });
 ```
 
-### Custom Routing
-If we need to expose a custom resource route, lets say we want to have a search route on movies, its easy to add. Likewise, if you want to add a route that operates on a single instance (i.e. /movies/:id/route) then set the detail flag to true. 
-
-The keys to routes are the route names. The values are either functions (last examples) or objects that specify handlers and several other properties.
+This will set up a route at `/resources/recommend`, which will be called on all HTTP methods. We can also restrict the HTTP method by adding it to the path:
 
 ```js
-var movies = new restful.Model({
-  routes: {
-    search: {
-      handler: function(req, res, next) {
-        // preform a search
-        res.status = 200 // the return status code
-        res.bundle = {} // Whatever data you want to return, custom serialization methods soon to come
-        next(); // Then pass up control
-      },
-      methods: ['get'], // only respond to GET requests
-      detail: false, // false by default, this operates on the collection of movies, /movies/search
-    },
-    similar: {
-      handler: function(req, res, next, err, movie) {
-        // get similar movies
-        next();
-      },
-      detail: true, // this is a detial endpoint, which operates on ONE movie, /movies/:id/similar
-      methods: ['get'],
-    },
-    anotherroute: function(req, res, next) { ... ; next() } // All methods, /movies/anotherroute
-  },
+Resource.route('recommend.get', function(req, res, next) {
+   res.send('GET a recommendation');
+});
+Resource.route('recommend', ['get', 'put', 'delete'], function(req, res, next) { ... });
+```
+    
+Or do some combination of HTTP methods.
+
+Now. Lets say we have to run arbitrary code before or after a route. Lets say we need to hash a password before a POST or PUT operation. Well, easy.
+
+```js
+Resource.before('post', hash_password)
+  .before('put', hash_password);
+      
+function hash_password(req, res, next) {
+  req.body.password = hash(req.body.password);
+  next();
+}
+```
+
+Boy. That was easy. What about doing stuff after request, but before its sent back to the user? Restful stores the bundle of data to be returned in `res.locals` (see [express docs](http://expressjs.com/api.html#res.locals)). `res.locals.status_code` is the returned status code and `res.locals.bundle` is the bundle of data. In every before and after call, you are free to modify these are you see fit!
+
+```js
+Resource.after('get', function(req, res, next) {
+  var tmp = res.locals.bundle.title; // Lets swap the title and year fields because we're funny!
+  res.locals.bundle.title = res.locals.bundle.year;
+  res.locals.bundle.year = tmp;
+  next(); // Don't forget to call next!
+});
+    
+Resource.after('recommend', do_something); // Runs after all HTTP verbs
+```
+
+Now, this is all great. But up until now we've really only talked about defining list routes, those at `/resources/route_name`. We can also define detail routes. Those look like this
+
+```js
+Resource.route('moreinfo', {
+    detail: true,
+    handler: function(req, res, next) {
+        // req.params.id holds the resource's id
+        res.send("I'm at /resources/:id/moreinfo!")
+    }
 });
 ```
+I don't think this is the prettiest, and I'd be open to suggestions on how to beautify detail route definition...
 
-You can also add the same routes by doing
-```js
-moves.userroute({
-  search: ...,
-  similar: ...,
-});
-```
-
-### Model
-Important functions:
-```js
-Model#new(properties)
-```
-Makes a new instance of a particular model with the given properties. Returns a [mongoose model](http://mongoosejs.com/docs/api.html#model-js) instance.
-
-```js
-Model#userroute(route, fn)
-```
-Takes a route, like 'search', 'similar' or a period delimited route i.e. 'search.similar' and a function like the ones above or an object like the ones above in custom routing. It then registers the custom route at the specified endpoint. If its a detail route then it will be prefixed by '/movies/:id/', otherwise by '/movies/'. If the route has periods or slashes, then the route will be nested, i.e. if 'search.similar' is a detail route, then its endpoint would be '/movies/:id/search/similar'
-
-```js
-Model#Model
-```
-Returns the underlying [mongoose model](http://mongoosejs.com/docs/api.html#model-js)
-
-```js
-Model#register(app, url)
-```
-Registers this model to the app at the given url
-
-
-### Other functions
-
-There are also several other functions that are exposed through restful.
-
-```js
-restful.respond404()
-```
-Returns a JSON error response for a 404 message
-
-```js
-restful.objectNotFound()
-```
-Returns a JSON error response for a 404 message because we couldn't find the object specified
-
-```js
-restful.multipleObjectsFound()
-```
-Returns a JSON error response for a 404 message because we found too many objects on a detail route
+And that's everything for now!
 
 ## Contributing
 
-Is always welcome, just reach out to [me](https://github.com/baugarten)
+You can view the issue list for what I'm working on, or contact me to help!
+
+Just reach out to [me](https://github.com/baugarten)
 
 ## MIT License
 Copyright (c) 2012 by Ben Augarten
