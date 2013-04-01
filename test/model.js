@@ -37,7 +37,24 @@ describe('Model', function() {
       done();
     });
   });
-  describe('.dispatch', function() {
+  describe('handlers', function() {
+    it('should handle schema request', function(done) {
+      request(app)
+        .get('/api/movies/schema')
+        .expect('Content-Type', /json/)
+        .expect(200)
+        .end(function(err, res) {
+          res.body.resource.should.equal('movies');
+          res.body.allowed_methods.should.eql(Object.keys(movies.allowed_methods));
+          res.body.fields.should.be.a('object');
+          Object.keys(movies.schema.paths).forEach(function(path) {
+            res.body.fields.should.have.property(path);
+          });
+          res.body.list_uri.should.equal('/api/movies');
+          res.body.detail_uri.should.equal('/api/movies/:id');
+          done();
+        });
+    });
     
     it('should dispatch to GET', function(done) {
       request(app)
@@ -66,6 +83,22 @@ describe('Model', function() {
           done();
         });
     });
+    it('should PUT data', function(done) {
+      request(app)
+        .put('/api/movies/' + movie2._id)
+        .send({
+          title: 'I changed the movie title'
+        })
+        .expect('Content-Type', /json/)
+        .expect(201)
+        .end(function(err, res) {
+          res.body.title.should.equal('I changed the movie title');
+          movies.findById(movie2._id, function(err, movie) {
+            movie.title.should.equal('I changed the movie title');
+            done();
+          });
+        });
+    });
     it('should fail on PUT without filter on unsortable model', function(done) {
       request(app)
         .put('/api/movies')
@@ -78,6 +111,18 @@ describe('Model', function() {
       request(app)
         .del('/users')
         .expect(404, done);
+    });
+    it('should DELETE a movie', function(done) {
+      request(app)
+        .del('/api/movies/' + movie3._id)
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .end(function(err, res) {
+          movies.findById(movie3._id, function(err, movie) {
+            should.not.exist(movie);
+            done();
+          });
+        });
     });
     it('should 404 on undefined route', function(done) {
       request(app)
