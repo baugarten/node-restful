@@ -13,14 +13,10 @@ exports.user = app.user;
 mongoose = app.mongoose;
 
 fixtures.load(data, mongoose.connection, function(err) {
-  exports.user.find({}, function(err, userslist) {
-    exports.users = userslist;
-    exports.movie.find({}, function(err, movieslist) {
-      exports.movies = movieslist;
-      done = true;
-      if (callback) return callback();
-    });
-  });
+  exports.users = data.users;
+  exports.movies = data.movies;
+  done = true;
+  if (callback) return callback();
 });
 
 exports.movies = data.movies;

@@ -1,10 +1,10 @@
 var should = require('should'),
     request = require('supertest'),
-    config = require('./fixtures/config'),
     sinon = require('sinon');
 
 describe('Model', function() {
-  var movies,
+  var config,
+      movies,
       users,
       app,
       movie1,
@@ -13,6 +13,7 @@ describe('Model', function() {
       user1,
       user2;
   before(function(done) {
+    config = require('./fixtures/config');
     config.ready(function() { 
       app = config.app;
       movies = config.movie;
