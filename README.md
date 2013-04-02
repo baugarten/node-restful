@@ -13,19 +13,20 @@ var express = require('express'),
     mongoose = restful.mongoose;
 var app = express();
 
-var movies = new restful.Model({
-  title: "movies",
-  methods: ['get', 'post', 'put', 'delete'],
-  schema: mongoose.Schema({
+var movies = restful.model('movies', mongoose.schema({
     title: 'string',
     year: 'number',
-  }),
+  })
+  .methods(['get', 'post', 'put', 'delete']);
 }); 
 
 movies.register(app, '/movies');
 
 app.listen(3000);
 ```
+
+The best part is that `restful.model` returns a Mongoose model, so you can interact with it the same way that you're already accustomed to! (i.e. `new Resource`, `Resource.findById`, etc.)
+
 ## Install
 
 ```
