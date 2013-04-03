@@ -24,9 +24,9 @@ describe('Model', function() {
       .update({})
       .delete({})
       .template('/idk/where/this/goes/');
-    posts.allowed_methods.should.have.property('get');
-    posts.allowed_methods.should.have.property('post');
-    posts.allowed_methods.should.have.property('put');
+    posts.allowed_methods.should.include('get');
+    posts.allowed_methods.should.include('post');
+    posts.allowed_methods.should.include('put');
     posts.update_options.should.be.a('object');
     posts.delete_options.should.be.a('object');
     posts.templateRoot.should.eql('/idk/where/this/goes');
