@@ -13,10 +13,15 @@ var express = require('express'),
     mongoose = restful.mongoose;
 var app = express();
 
-var Resource = restful.model('resource', mongoose.Schema({
+app.use(express.bodyParser());
+app.use(express.query());
+
+mongoose.connect("mongodb://localhost/resources");
+
+var Resource = app.resource = restful.model('resource', mongoose.Schema({
     title: 'string',
     year: 'number',
-  })
+  }))
   .methods(['get', 'post', 'put', 'delete']);
 
 Resource.register(app, '/resources');
