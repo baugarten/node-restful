@@ -1,5 +1,5 @@
 var express = require('express'),
-    fixtures = require('mongoose-fixtures'),
+    fixtures = require('pow-mongoose-fixtures'),
     app = require('../../examples/movies/'),
     data = require('./data'),
     done = false,

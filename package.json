@@ -13,7 +13,7 @@
     "should": "1.2.1",
     "supertest": "0.5.1",
     "sinon": "1.5.2",
-    "pow-mongoose-fixtures": "git://github.com/powmedia/mongoose-fixtures.git"
+    "pow-mongoose-fixtures": "0.3.0"
   },
   "keywords": [
     "node-restful",
