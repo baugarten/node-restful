@@ -80,7 +80,7 @@ describe('Model', function() {
         .end(function(err, res) {
           res.body.title.should.equal('A very stupid movie');
           res.body._id.should.a('_id');
-          done();
+          done(err);
         });
     });
     it('should PUT data', function(done) {
