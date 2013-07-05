@@ -146,5 +146,14 @@ describe('Model', function() {
           done();
         });
     });
+    it('should populate an objectId', function(done) {
+      request(app)
+        .get('/api/movies/' + movie1._id + '?populate=creator')
+        .end(function(err, res) {
+          res.body.creator.username.should.equal(user1.username);
+          res.body.creator.pass_hash.should.equal(user1.pass_hash);
+          done();
+        });
+    });
   });
 });
