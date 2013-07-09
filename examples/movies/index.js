@@ -16,7 +16,7 @@ var user = app.user = restful.model('users', mongoose.Schema({
     pass_hash: { type: 'number', required: true }
   }))
   .methods(['get', 'post', 'put', 'delete'])
-  .delete({
+  .removeOptions({
     sort: 'field -username'
   });
 
