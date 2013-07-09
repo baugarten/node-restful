@@ -30,7 +30,6 @@ describe('Model', function() {
     posts.update_options.should.be.a('object');
     posts.delete_options.should.be.a('object');
     posts.templateRoot.should.eql('/idk/where/this/goes');
-    
   });
   it('should be updateable', function() {
     var Posts = restful.model('posts');
@@ -38,8 +37,9 @@ describe('Model', function() {
       title: "First post"
     }, function(err, post) {
       post.title.should.equal('First post');
-      Posts.update({_id: post._id}, { title: "Second post"}, function(err, post) {
-        post.title.should.equal('Second post');
+      Posts.update({_id: post._id}, { title: "Second post"}, function(err, numUpdated, post) {
+        numUpdated.should.equal(1);
+        post.ok.should.equal(1);
       });
     })
   });
