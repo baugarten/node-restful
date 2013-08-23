@@ -229,5 +229,22 @@ describe('Model', function() {
         .put('/api/movies/athirdroute')
         .expect(404, done);
     });
+    it('should allow put of entire object', function(done) {
+      request(app)
+        .get('/api/movies/' + config.movies[7]._id)
+        .end(function(err, res) {
+          var movie = res.body;
+          movie.title = 'A different title';
+          request(app)
+            .put('/api/movies/' + movie._id)
+            .send(movie)
+            .expect('Content-Type', /json/)
+            .expect(201)
+            .end(function(err, res) {
+              res.body.title.should.equal('A different title');
+              done();
+            });
+        });
+    });
   });
 });
