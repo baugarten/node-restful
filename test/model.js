@@ -42,7 +42,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/schema')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(300)
         .end(function(err, res) {
           res.body.resource.should.equal('movies');
           res.body.allowed_methods.should.eql(Object.keys(movies.allowed_methods));
@@ -90,7 +90,7 @@ describe('Model', function() {
           title: 'I changed the movie title'
         })
         .expect('Content-Type', /json/)
-        .expect(201)
+        .expect(301)
         .end(function(err, res) {
           res.body.title.should.equal('I changed the movie title');
           movies.findById(movie2._id, function(err, movie) {
@@ -115,7 +115,7 @@ describe('Model', function() {
     it('should DELETE a movie', function(done) {
       request(app)
         .del('/api/movies/' + movie3._id)
-        .expect(200)
+        .expect(300)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
           movies.findById(movie3._id, function(err, movie) {
@@ -172,7 +172,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/' + movie1._id + '/meta/director')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(300)
         .end(function(err, res) {
           res.should.be.json;
           res.body.username.should.equal('test2');
@@ -190,7 +190,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/recommend')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(300)
         .end(function(err, res) {
           res.should.be.json;
           res.body.recommend.should.equal("called");
@@ -201,7 +201,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/anotherroute')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(300)
         .end(function(err, res) {
           res.should.be.json;
           res.body.anotherroute.should.equal("called");
@@ -212,7 +212,7 @@ describe('Model', function() {
       request(app)
         .get('/api/movies/' + movie1._id + '/athirdroute')
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(300)
         .end(function(err, res) {
           res.should.be.json;
           res.body.athirdroute.should.equal("called");
@@ -239,7 +239,7 @@ describe('Model', function() {
             .put('/api/movies/' + movie._id)
             .send(movie)
             .expect('Content-Type', /json/)
-            .expect(201)
+            .expect(301)
             .end(function(err, res) {
               res.body.title.should.equal('A different title');
               done();
