@@ -52,7 +52,8 @@ describe('Model', function() {
           });
           res.body.list_uri.should.equal('/api/movies');
           res.body.detail_uri.should.equal('/api/movies/:id');
-          done();
+          if (err) return done(err);
+          else done();
         });
     });
     
@@ -95,7 +96,8 @@ describe('Model', function() {
           res.body.title.should.equal('I changed the movie title');
           movies.findById(movie2._id, function(err, movie) {
             movie.title.should.equal('I changed the movie title');
-            done();
+            if (err) return done(err);
+            else done();
           });
         });
     });
@@ -120,7 +122,8 @@ describe('Model', function() {
         .end(function(err, res) {
           movies.findById(movie3._id, function(err, movie) {
             should.not.exist(movie);
-            done();
+            if (err) return done(err);
+            else done();
           });
         });
     });
@@ -160,7 +163,8 @@ describe('Model', function() {
           res.should.be.json;
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
-          done();
+          if (err) return done(err);
+          else done();
         }); 
     });
     it('should 404 if we request an object endpoint without a filter', function(done) {
@@ -177,7 +181,8 @@ describe('Model', function() {
           res.should.be.json;
           res.body.username.should.equal('test2');
           res.body.pass_hash.should.equal(1237987381263189273123);
-          done();
+          if (err) return done(err);
+          else done();
         });
 
     });
@@ -194,7 +199,8 @@ describe('Model', function() {
         .end(function(err, res) {
           res.should.be.json;
           res.body.recommend.should.equal("called");
-          done();
+          if (err) return done(err);
+          else done();
         });
     });
     it('should get anotheroute (user defined route)', function(done) {
@@ -205,7 +211,8 @@ describe('Model', function() {
         .end(function(err, res) {
           res.should.be.json;
           res.body.anotherroute.should.equal("called");
-          done();
+          if (err) return done(err);
+          else done();
         });
     });
     it('should get athirdroute (user defined route)', function(done) {
@@ -216,7 +223,8 @@ describe('Model', function() {
         .end(function(err, res) {
           res.should.be.json;
           res.body.athirdroute.should.equal("called");
-          done();
+          if (err) return done(err);
+          else done();
         });
     });
     it('should fail athirdroute (user defined route)', function(done) {
@@ -239,10 +247,11 @@ describe('Model', function() {
             .put('/api/movies/' + movie._id)
             .send(movie)
             .expect('Content-Type', /json/)
-            .expect(201)
+            .expect(200)
             .end(function(err, res) {
               res.body.title.should.equal('A different title');
-              done();
+              if (err) return done(err);
+              else done();
             });
         });
     });
