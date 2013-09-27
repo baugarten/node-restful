@@ -155,5 +155,15 @@ describe('Model', function() {
           done();
         });
     });
+    it('should filter using in', function(done) {
+      request(app)
+        .get('/api/movies?year__in=2010,2011')
+        .end(function(err, res) {
+          res.body.forEach(function(movie) {
+            [2010,2011].indexOf(movie.year).should.be.above(-1);
+          });
+          done();
+        });
+    });
   });
 });
