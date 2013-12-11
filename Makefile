@@ -1,29 +1,41 @@
-MOCHA_OPTS=
+MOCHA_OPTS = 
 REPORTER = dot
 
-check: test
+PATH := ./node_modules/.bin:${PATH}
 
-test: test-unit
+.PHONY : init clean-docs clean build test dist publish
 
-test-unit:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
+init:
+	npm install
+
+docs:
+	docco src/*.coffee
+
+clean-docs:
+	rm -rf docs/
+
+clean: clean-docs
+	rm -rf lib/ test/*.js
+
+build:
+	coffee -o lib/ -c src/
+
+test: build
+	@NODE_ENV=test mocha \
 		--reporter $(REPORTER) \
+		--compilers coffee:coffee-script \
 		$(MOCHA_OPTS)
 
-test-acceptance:
-	@NODE_ENV=test ./node_modules/.bin/mocha \
-		--reporter $(REPORTER) \
-		--bail \
-		test/acceptance/*.js
-
 test-cov: lib-cov
-	@RESTFUL_COV=1 $(MAKE) test REPORTER=html-cov > coverage.html
+	@RESTFUL_COV=1 $(MAKE) test REPORDER=html-cov > coverage.html
+
+test-server: build
+	node examples/movies/index.js
 
 lib-cov:
 	@jscoverage lib lib-cov
 
-clean:
-	rm -f coverage.html
-	rm -rf lib-cov
+dist: clean init docs build test
 
-.PHONY: test test-unit clean
+publish: dist
+	npm publish

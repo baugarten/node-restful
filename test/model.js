@@ -78,6 +78,7 @@ describe('Model', function() {
         .expect('Content-Type', /json/)
         .expect(201 )
         .end(function(err, res) {
+          console.log("Posted movie", err, res.body);
           res.body.title.should.equal('A very stupid movie');
           res.body._id.should.a('_id');
           done(err);
@@ -133,16 +134,19 @@ describe('Model', function() {
             .send({
               title: 'But I already deleted you'
             })
-          .expect(400, done);
+          .expect(404, done);
         });
     });
     it('should 400 deleting a resource twice', function(done) {
       request(app)
         .del('/api/movies/' + config.movies[6]._id)
-        .end(function() {
+        .end(function(err, res) {
           request(app)
             .del('/api/movies/' + config.movies[6]._id)
-            .expect(400, done);
+            .expect(404)
+            .end(function(err2, res2) {
+              done(err2)
+            });
         });
     });
     it('should 404 on undefined route', function(done) {

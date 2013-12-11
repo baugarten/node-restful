@@ -5,23 +5,26 @@ var app = module.exports = express();
 
 app.use(express.bodyParser());
 app.use(express.query());
+app.use(restful);
 app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
 
 mongoose.connect("mongodb://localhost/movies_test");
 
-var user = app.user = restful.model('users', mongoose.Schema({
+var user = mongoose.model('users', mongoose.Schema({
     username: { type: 'string', required: true },
     pass_hash: { type: 'number', required: true }
-  }))
+  }));
+
+var userResource = app.user = restful.resource('users')
   .methods(['get', 'post', 'put', 'delete'])
-  .removeOptions({
+  .setRemoveOptions({
     sort: 'field -username'
   });
 
 
-var movie = app.movie = restful.model("movies", mongoose.Schema({
+var movie = app.movie = mongoose.model("movies", mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number', required: true },
     creator: {type: 'ObjectId', ref: 'users' },
@@ -37,15 +40,13 @@ var movie = app.movie = restful.model("movies", mongoose.Schema({
     secret: { type: 'string', select: false }
   }));
 
-movie.methods([
-    { 
-      method: 'get', 
-      before: noop,
-      after: noop
-    }, 
+var movieResource = app.movie = restful.resource('movies');
+movieResource.methods([
+    'get',
     'post', 
     'put', 
     'delete'])
+  .baseUrl('api/movies')
   .route('recommend', function(req, res, next) {
     res.locals.status_code = 200;
     res.locals.bundle.recommend = 'called';
@@ -58,27 +59,28 @@ movie.methods([
     }));
     res.end(); // This ends the request and prevents any after filters from executing
   })
-  .route('athirdroute', {
-    handler: function(req, res, next) {
-      res.locals.status_code = 200; // Store response status code
-      res.locals.bundle = {
-        athirdroute: "called" // And response data
-      };
-      next(); // Call *after* filters and then return the response
-    },
-    methods: ['get', 'post'],
-    detail: true // Will mount the route at the detail endpoint /movies/:id/athirdroute
+  .route('athirdroute', ["get", "post"], true, function(req, res, next) {
+    console.log("ATHIRDROUTE");
+    res.locals.status_code = 200; // Store response status code
+    res.locals.bundle = {
+      athirdroute: "called" // And response data
+    };
+    next(); // Call *after* filters and then return the response
   })
-  .before('post', noop) // before a POST, execute noop
-  .after('post', noop)
-  .before('put', noop)
-  .after('put', noop)
+  .before('', 'post', noop) // before a POST, execute noop
+  .after('', 'post', noop)
+  .before('', 'get', noop)
+  .after('', 'get', noop)
+  .before('', 'put', noop)
+  .after('', 'put', noop)
   .after('recommend', after)
   .after('athirdroute', after);
-user.register(app, '/users');
-movie.register(app, '/api/movies');
+userResource.register();
+movieResource.register();
+
 
 if (!module.parent) {
+  console.log("Listening")
   app.listen(3000);
 }
 

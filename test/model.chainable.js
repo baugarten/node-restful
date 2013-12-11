@@ -7,8 +7,9 @@ var should = require('should'),
 describe('Model', function() {
  
   before(function() {
-    restful.model('posts', mongoose.Schema({ title: 'string' }));
+    mongoose.model('posts', mongoose.Schema({ title: 'string' }));
   });
+
   it('should return a mongoose model', function() {
     var posts = restful.model('posts');
 
