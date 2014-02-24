@@ -29,7 +29,7 @@ var User = restful.model( "users", mongoose.Schema({
     password_hash: 'string',
   }))
   .methods(['get', 'put', 'delete', {
-    type: 'post',
+    method: 'post',
     before: hashPassword, // Before we make run the default POST to create a user, we want to hash the password (implementation omitted)
     after: sendEmail, // After we register them, we will send them a confirmation email
   }]);
