@@ -41,6 +41,10 @@ which do exactly what you think they do!
 
 The best part is that `restful.model` returns a Mongoose model, so you can interact with it the same way that you're already accustomed to! (i.e. `new Resource`, `Resource.findById`, etc.)
 
+## Support
+
+This library is currently supported through complaint driven development, so if you see something, have a feature request, open an issue and if it seems to jive with the mission of the library, I'll prioritize it.
+
 ## Install
 
 ```
