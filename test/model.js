@@ -246,5 +246,10 @@ describe('Model', function() {
             });
         });
     });
+    it('should allow overriding of schema route', function(done) {
+      request(app)
+        .get('/users/schema')
+        .expect(404, done);
+    });
   });
 });

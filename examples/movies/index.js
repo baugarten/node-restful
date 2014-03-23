@@ -18,7 +18,8 @@ var user = app.user = restful.model('users', mongoose.Schema({
   .methods(['get', 'post', 'put', 'delete'])
   .removeOptions({
     sort: 'field -username'
-  });
+  })
+  .includeSchema(false);
 
 
 var movie = app.movie = restful.model("movies", mongoose.Schema({
