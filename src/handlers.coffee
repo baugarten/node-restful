@@ -75,4 +75,3 @@ exports.respondOrError = (res, errObj, errStatusCode, succObj, succStatusCode) -
 exports.respond = (res, content, statusCode) ->
   res.locals.bundle = content
   res.locals.status_code = statusCode
-

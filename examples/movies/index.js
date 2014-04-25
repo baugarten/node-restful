@@ -43,13 +43,15 @@ var movie = app.movie = mongoose.model("movies", mongoose.Schema({
 var movieResource = app.movie = restful.resource('movies');
 movieResource.methods([
     'get',
-    'post', 
-    'put', 
+    'post',
+    'put',
     'delete'])
   .baseUrl('api/movies')
   .route('recommend', function(req, res, next) {
+    console.log("Recommending!\n\n");
     res.locals.status_code = 200;
     res.locals.bundle.recommend = 'called';
+    console.log(next);
     next();
   })
   .route('anotherroute', function(req, res, next) {
@@ -60,7 +62,6 @@ movieResource.methods([
     res.end(); // This ends the request and prevents any after filters from executing
   })
   .route('athirdroute', ["get", "post"], true, function(req, res, next) {
-    console.log("ATHIRDROUTE");
     res.locals.status_code = 200; // Store response status code
     res.locals.bundle = {
       athirdroute: "called" // And response data
@@ -68,8 +69,8 @@ movieResource.methods([
     next(); // Call *after* filters and then return the response
   })
   .before('', 'post', noop) // before a POST, execute noop
-  .after('', 'post', noop)
   .before('', 'get', noop)
+  .after('', 'post', noop)
   .after('', 'get', noop)
   .before('', 'put', noop)
   .after('', 'put', noop)
@@ -80,13 +81,14 @@ movieResource.register();
 
 
 if (!module.parent) {
-  console.log("Listening")
   app.listen(3000);
 }
 
-function noop(req, res, next) { next(); }
+function noop(req, res, next) {
+  next();
+}
 function after(req, res, next) {
+  console.log("AFTER");
   res.locals.bundle.after = 'called';
   next();
 }
-

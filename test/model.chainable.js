@@ -14,36 +14,22 @@ describe('Model', function() {
     var posts = restful.model('posts');
 
     posts.should.have.property('methods');
-    posts.should.have.property('update');
-    posts.should.have.property('remove');
-    posts.should.have.property('updateOptions');
-    posts.should.have.property('removeOptions');
+    posts.should.have.property('setUpdateOptions');
+    posts.should.have.property('setRemoveOptions');
   });
   it('should add methods in a chainable way', function() {
     var posts = restful.model('posts');
-    posts.allowed_methods.should.have.property('get');
+    posts.allowedMethods.should.include('detail');
+    posts.allowedMethods.should.include('index');
     posts.methods(['get', 'post', 'put'])
-      .updateOptions({})
-      .removeOptions({})
-      .template('/idk/where/this/goes/');
-    posts.allowed_methods.should.include('get');
-    posts.allowed_methods.should.include('post');
-    posts.allowed_methods.should.include('put');
-    posts.update_options.should.be.a('object');
-    posts.remove_options.should.be.a('object');
-    posts.templateRoot.should.eql('/idk/where/this/goes');
+      .setUpdateOptions({})
+      .setRemoveOptions({});
+    posts.allowedMethods.should.include('detail');
+    posts.allowedMethods.should.include('index');
+    posts.allowedMethods.should.include('post');
+    posts.allowedMethods.should.include('put');
+    posts.updateOptions.should.be.a('object');
+    posts.removeOptions.should.be.a('object');
     
-  });
-  it('should be updateable', function(done) {
-    var Posts = restful.model('posts');
-    Posts.create({
-      title: "First post"
-    }, function(err, post) {
-      post.title.should.equal('First post');
-      Posts.update({_id: post._id}, { title: "Second post"}, function(err, count, resp) {
-        count.should.equal(1)
-        done()
-      });
-    })
   });
 });

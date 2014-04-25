@@ -1,4 +1,5 @@
 var should = require('should'),
+    mongoose = require('mongoose'),
     request = require('supertest'),
     config = require('./fixtures/config'),
     sinon = require('sinon'),
@@ -94,7 +95,7 @@ describe('Model', function() {
         .expect(201)
         .end(function(err, res) {
           res.body.title.should.equal('I changed the movie title');
-          movies.findById(movie2._id, function(err, movie) {
+          mongoose.model('movies').findById(movie2._id, function(err, movie) {
             movie.title.should.equal('I changed the movie title');
             done();
           });
@@ -119,7 +120,7 @@ describe('Model', function() {
         .expect(200)
         .expect('Content-Type', /json/)
         .end(function(err, res) {
-          movies.findById(movie3._id, function(err, movie) {
+          mongoose.model('movies').findById(movie3._id, function(err, movie) {
             should.not.exist(movie);
             done();
           });

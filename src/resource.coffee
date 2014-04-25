@@ -8,13 +8,10 @@ class Resource
 
   constructor: (@resourceName, @Model) ->
     @routes = []
+    @methods('get') # Can get by default
 
   methods: (newmethods) ->
-    if @allowedMethods?.length > 0
-      throw new Error("Cannot set the methods of a resource more than once")
-    @allowedMethods = @normalizeMethods(newmethods)
-
-    @addMethodRoutes()
+    @allowedMethods = @expandGetMethodForInternalUse @normalizeMethods(newmethods)
     @
 
   addMethodRoutes: ->
@@ -28,7 +25,6 @@ class Resource
   route: (path, methods, detail, fn) ->
     if arguments.length == 2
       fn = methods
-      console.log("Route #{path}", _.without(@allowedMethods, 'detail', 'index'))
       @route(path, meth, false, fn) for meth in _.without(@allowedMethods, 'detail', 'index')
       [methods, detail] = ['get', false]
     else if arguments.length == 3
@@ -39,13 +35,15 @@ class Resource
 
     methods = [methods] unless _.isArray(methods)
     methods.forEach (method) =>
-      @routes.push {
-        path: path
-        method: method
-        detail: detail
-        handler: fn
-      }
+      route = @findOrInsertRoute(path, method)
+      route.detail = detail
+      route.handler = fn
     @
+
+  makePath: (path) ->
+    if (path?.length > 0 and path.charAt(0) != '/')
+      path = "/#{path}"
+    path
 
   before: (path, methods, fn) ->
     if arguments.length == 2
@@ -68,38 +66,55 @@ class Resource
   setHandlerProperty: (path, methods, property, setter) ->
     methods = @normalizeMethods(methods)
     methods.forEach (method) =>
-      route = _.findWhere @routes, path: path, method: method
-      return unless route
-
+      route = @findOrInsertRoute(path, method)
       route[property] = setter(route[property])
     @
 
+  findOrInsertRoute: (path, method) ->
+    path = @makePath(path)
+    route = _.findWhere @routes, path: path, method: method
+    unless route
+      route = {
+        path: path
+        method: method
+        handler: handlers.noop
+        detail: false
+      }
+      @routes.push route
+    return route
+
+
   normalizeMethods: (methods) ->
-    methods = [methods] unless _.isArray(methods)
+    if _.isArray(methods) then methods else [methods]
+
+  expandGetMethodForInternalUse: (methods) ->
     if 'get' in methods
       methods = _.without(methods, 'get')
       methods = methods.concat(['detail', 'index'])
     methods
 
   register: () ->
+    @addMethodRoutes()
     # We treat index and detail as valid methods, but really they're just gets
     app.index = app.detail = app.get
+    console.log "Registering", @routes
     @routes.forEach(_.bind(_.partial(@registerRoute, app), @))
 
   registerRoute: (app, route) ->
+    return unless route.handler
+
     if route.detail
       url = "/#{@resourceName}/:id([0-9a-fA-F]{0,24})#{route.path}"
     else
       url = "/#{@resourceName}#{route.path}"
-    console.log("Registering", route.method, url)
+    console.log("registring path", url, route.method, @makeHandler(route))
     app[route.method](url, @makeHandler(route))
-    
+
   makeHandler: (route) ->
-    console.log(route) unless route.handler
-    [handlers.preprocess.bind(this)].concat(
-      route.before or []
-      route.handler.bind(this)
-      route.after or []
+    return [handlers.preprocess.bind(this)].concat(
+      route.before or [],
+      route.handler.bind(this),
+      route.after or [],
       handlers.last
     )
 

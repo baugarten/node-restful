@@ -13,6 +13,7 @@ describe('Model', function() {
   describe('before hook', function() {
     it('should call the before hook on a GET', function() {
       console.log(movie.routes);
+      console.log("REOUELJRLSJF", _.findWhere(movie.routes, { path: "", method: "index" }))
       _.findWhere(movie.routes, { path: "", method: "index" }).before.length.should.equal(1);
       _.findWhere(movie.routes, { path: "", method: "detail" }).before.length.should.equal(1);
       _.findWhere(movie.routes, { path: "", method: "index" }).after.length.should.equal(1);

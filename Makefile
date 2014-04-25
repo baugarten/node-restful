@@ -39,3 +39,6 @@ dist: clean init docs build test
 
 publish: dist
 	npm publish
+
+example: build
+	node examples/movies
