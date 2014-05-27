@@ -51,7 +51,7 @@ var Note = restful.model("note", mongoose.Schema({
     body: { type: 'string', required: true},
     creator: { type: 'ObjectId', ref: 'user', require: true},
   }))
-  .methods(['get', 'delete', { type: 'post', before: validateUser }, { type: 'put', before: validateUser }]);
+  .methods(['get', 'delete', { method: 'post', before: validateUser }, { method: 'put', before: validateUser }]);
 
 Note.register(app, '/note');
 
