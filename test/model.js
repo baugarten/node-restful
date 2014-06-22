@@ -251,5 +251,14 @@ describe('Model', function() {
         .get('/users/schema')
         .expect(404, done);
     });
+    it('should allow multiple handlers to be called on a single route', function(done) {
+      request(app)
+        .get('/api/movies/pshh')
+        .expect(200)
+        .end(function(err, res) {
+          res.body.pshh.should.equal('called');
+          done(err);
+        });
+    });
   });
 });

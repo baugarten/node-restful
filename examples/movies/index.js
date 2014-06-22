@@ -70,6 +70,20 @@ movie.methods([
     methods: ['get', 'post'],
     detail: true // Will mount the route at the detail endpoint /movies/:id/athirdroute
   })
+  .route('pshh', {
+    handler: [function(req, res, next) {
+      next();
+    }, function(req, res, next) {
+      next();
+    }, function(req, res, next) {
+      res.locals.status_code = 200;
+      res.locals.bundle = {
+        pshh: "called"
+      };
+      next();
+    }],
+    methods: ['get', 'post'],
+  })
   .before('post', noop) // before a POST, execute noop
   .after('post', noop)
   .before('put', noop)
