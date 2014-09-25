@@ -2,120 +2,125 @@ _ = require 'underscore'
 handlers = require './handlers'
 app = require './app'
 filters = require './filters'
+makeRoute = require './route'
 
 class Resource
-  @ALL_METHODS: ["get", "put", "post", "delete"]
+  # The built in methods that we support
+  @ALL_ROUTES:
+    "list":
+      method: "get"
+      detail: false
+      handler: handlers.list
+    "detail":
+      method: "get"
+      detail: true
+      handler: handlers.detail
+    "update":
+      method: "put"
+      detail: true
+      handler: handlers.update
+    "create":
+      method: "post"
+      detail: false
+      handler: handlers.create
+    "destroy":
+      method: "delete"
+      detail: true
+      handler: handlers.destroy
+
+  @ALL_METHODS: ['get', 'put', 'post', 'delete']
 
   constructor: (@resourceName, @Model) ->
     @routes = []
-    @methods('get') # Can get by default
 
-  methods: (newmethods) ->
-    @allowedMethods = @expandGetMethodForInternalUse @normalizeMethods(newmethods)
+  withRoutes: (newRoutes) ->
+    if @addedRoutes
+      throw new Error("Cannot register built in routes more than once")
+
+    newRoutes = @arrayify(newRoutes)
+    validRoutes = Object.keys(Resource.ALL_ROUTES)
+    
+    newRoutes.forEach (route) ->
+      unless route in validRoutes
+        throw new Error("Route '#{route}' not recognized as built in route. " +
+          "Valid choices are [#{validRoutes}]")
+
+    routes = _.map(_.filter(validRoutes, (routeName) ->
+      routeName in newRoutes
+    ), (routeName) =>
+      route = Resource.ALL_ROUTES[routeName]
+      makeRoute('', route.method, route.handler, route.detail)
+    )
+    routes.forEach _.bind(@insertRoute, @)
+    @addedRoutes = true
     @
 
-  addMethodRoutes: ->
-    @allowedMethods.forEach (method) =>
-      # the only non-detail route is index
-      @route('', method, (method != 'index' and method != 'post'), handlers[method])
+  arrayify: (maybeNotArray) ->
+    if _.isArray(maybeNotArray) then maybeNotArray else [maybeNotArray]
 
-  baseUrl: (@resourceName) ->
-    @
+  # Not sure what this is meant to be
+  #baseUrl: (@resourceName) ->
+  #  @
 
   route: (path, methods, detail, fn) ->
     if arguments.length == 2
+      # route(path, fn)
       fn = methods
-      @route(path, meth, false, fn) for meth in _.without(@allowedMethods, 'detail', 'index')
-      [methods, detail] = ['get', false]
+      methods = ['get']
+      detail = false
     else if arguments.length == 3
+      # route(path, methods, fn)
       [detail, fn] = [false, detail]
-
-    if (path?.length > 0 and path.charAt(0) != '/')
-      path = "/#{path}"
 
     methods = [methods] unless _.isArray(methods)
     methods.forEach (method) =>
-      route = @findOrInsertRoute(path, method)
-      route.detail = detail
-      route.handler = fn
+      route = makeRoute(path, method, fn, detail)
+      route = @insertRoute(route)
     @
 
-  makePath: (path) ->
+  @addMiddleware: (beforeOrAfter) ->
+    (path, methods, detail, fn) ->
+      methods = @arrayify(methods)
+      methods.forEach (method) =>
+        existingRoute = @findRoute(path, method, detail)
+        unless existingRoute
+          throw new Error("Trying to add #{beforeOrAfter} middleware on an " +
+            "unregistered route #{path} #{method} #{detail}")
+        existingRoute[beforeOrAfter](fn)
+      @
+
+  before: Resource.addMiddleware('before')
+  after: Resource.addMiddleware('after')
+
+  findRoute: (path, method, detail) ->
     if (path?.length > 0 and path.charAt(0) != '/')
       path = "/#{path}"
-    path
+    _.findWhere @routes, path: path, method: method, detail: detail
 
-  before: (path, methods, fn) ->
-    if arguments.length == 2
-      fn = methods
-      methods = @constructor.ALL_METHODS
-
-    @setHandlerProperty path, methods, 'before', (beforeHandlers) ->
-      return (beforeHandlers or []).concat([fn])
-    @
-
-  after: (path, methods, fn) ->
-    if arguments.length == 2
-      fn = methods
-      methods = @constructor.ALL_METHODS
-
-    @setHandlerProperty path, methods, 'after', (beforeHandlers) ->
-      return (beforeHandlers or []).concat([fn])
-    @
-
-  setHandlerProperty: (path, methods, property, setter) ->
-    methods = @normalizeMethods(methods)
-    methods.forEach (method) =>
-      route = @findOrInsertRoute(path, method)
-      route[property] = setter(route[property])
-    @
-
-  findOrInsertRoute: (path, method) ->
-    path = @makePath(path)
-    route = _.findWhere @routes, path: path, method: method
-    unless route
-      route = {
-        path: path
-        method: method
-        handler: handlers.noop
-        detail: false
-      }
+  insertRoute: (route) ->
+    existingRoute = @findRoute(route.path, route.method, route.detail)
+    unless existingRoute
       @routes.push route
-    return route
-
-
-  normalizeMethods: (methods) ->
-    if _.isArray(methods) then methods else [methods]
-
-  expandGetMethodForInternalUse: (methods) ->
-    if 'get' in methods
-      methods = _.without(methods, 'get')
-      methods = methods.concat(['detail', 'index'])
-    methods
+    else
+      throw new Error("Trying to register route twice. " +
+        "#{existingRoute} already registered. #{route} ignored")
 
   register: () ->
-    @addMethodRoutes()
-    # We treat index and detail as valid methods, but really they're just gets
-    app.index = app.detail = app.get
-    console.log "Registering", @routes
-    @routes.forEach(_.bind(_.partial(@registerRoute, app), @))
+    unless @addedRoutes
+      console.log('No built in routes specified. Adding list and detail routes')
+      @withRoutes('list', 'detail')
 
-  registerRoute: (app, route) ->
+    @routes.forEach _.bind(@registerRoute, @)
+
+  registerRoute: (route) ->
     return unless route.handler
-
-    if route.detail
-      url = "/#{@resourceName}/:id([0-9a-fA-F]{0,24})#{route.path}"
-    else
-      url = "/#{@resourceName}#{route.path}"
-    console.log("registring path", url, route.method, @makeHandler(route))
+    url = "/#{@resourceName}#{route.url()}"
     app[route.method](url, @makeHandler(route))
 
   makeHandler: (route) ->
-    return [handlers.preprocess.bind(this)].concat(
-      route.before or [],
-      route.handler.bind(this),
-      route.after or [],
-      handlers.last
+    return [_.bind(handlers.preprocess, @)].concat(
+      _.map(route.handlers(), (handler) => _.bind(handler, @)),
+      _.bind(handlers.last, @)
     )
 
   filter: (req, query = @Model.find({})) ->

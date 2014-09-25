@@ -15,7 +15,7 @@ exports.last = (req, res, next) ->
   else
     res.send()
 
-exports.index = (req, res, next) ->
+exports.list = (req, res, next) ->
   req.query.exec (err, list) ->
     exports.respondOrError(res, err, 500, list, 200)
     next()
@@ -33,13 +33,16 @@ exports.getPath = (pathName) ->
       exports.respondOrError(res, err, errStatus, obj?.get(pathName), 200)
       next()
 
-exports.post = (req, res, next) ->
+exports.create = (req, res, next) ->
+  console.log("Posting object")
   obj = new @Model(req.body)
+  console.log("Saving obj", obj)
   obj.save (err) ->
+    console.log("Object saved")
     exports.respondOrError(res, err, 400, obj, 201)
     next()
 
-exports.put = (req, res, next) ->
+exports.update = (req, res, next) ->
   if req.body?._id == req.params.id
     delete req.body._id
   req.query.findOneAndUpdate {}, req.body, (err, obj) ->
@@ -51,7 +54,7 @@ exports.put = (req, res, next) ->
       exports.respond(res, obj, 200)
     next()
 
-exports.delete = (req, res, next) ->
+exports.destroy = (req, res, next) ->
   req.query.findOneAndRemove {}, (err, obj) ->
     if err
       exports.respond(res, err, 500)

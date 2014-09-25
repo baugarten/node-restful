@@ -24,7 +24,8 @@ test: build
 	@NODE_ENV=test mocha \
 		--reporter $(REPORTER) \
 		--compilers coffee:coffee-script \
-		$(MOCHA_OPTS)
+		$(MOCHA_OPTS) \
+		test/*.coffee	
 
 test-cov: lib-cov
 	@RESTFUL_COV=1 $(MAKE) test REPORDER=html-cov > coverage.html

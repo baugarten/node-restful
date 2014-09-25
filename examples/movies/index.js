@@ -10,7 +10,9 @@ app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
 
-mongoose.connect("mongodb://localhost/movies_test");
+mongoose.connect("mongodb://localhost/movies_test", {}, function() {
+  console.log("Connected", arguments);                
+});
 
 var user = mongoose.model('users', mongoose.Schema({
     username: { type: 'string', required: true },
@@ -18,11 +20,8 @@ var user = mongoose.model('users', mongoose.Schema({
   }));
 
 var userResource = app.user = restful.resource('users')
-  .methods(['get', 'post', 'put', 'delete'])
-  .setRemoveOptions({
-    sort: 'field -username'
-  });
-
+  .withRoutes(['list', 'detail', 'update', 'create', 'destroy'])
+  .register()
 
 var movie = app.movie = mongoose.model("movies", mongoose.Schema({
     title: { type: 'string', required: true },
@@ -41,12 +40,9 @@ var movie = app.movie = mongoose.model("movies", mongoose.Schema({
   }));
 
 var movieResource = app.movie = restful.resource('movies');
-movieResource.methods([
-    'get',
-    'post',
-    'put',
-    'delete'])
-  .baseUrl('api/movies')
+movieResource
+  .withRoutes(['list', 'detail', 'update', 'create', 'destroy'])
+  //.baseUrl('api/movies')
   .route('recommend', function(req, res, next) {
     console.log("Recommending!\n\n");
     res.locals.status_code = 200;
@@ -68,21 +64,18 @@ movieResource.methods([
     };
     next(); // Call *after* filters and then return the response
   })
-  .before('', 'post', noop) // before a POST, execute noop
-  .before('', 'get', noop)
-  .after('', 'post', noop)
-  .after('', 'get', noop)
-  .before('', 'put', noop)
-  .after('', 'put', noop)
-  .after('recommend', after)
-  .after('athirdroute', after);
-userResource.register();
-movieResource.register();
+  .before('', 'post', false, noop) // before a POST, execute noop
+  .before('', 'get', true, noop)
+  .after('', 'post', false, noop)
+  .after('', 'get', true, noop)
+  .before('', 'put', true, noop)
+  .after('', 'put', true, noop)
+  .after('recommend', 'get', false, after)
+  .after('athirdroute', ['get', 'post'], true, after)
+  .register();
 
 
-if (!module.parent) {
-  app.listen(3000);
-}
+app.listen(3000);
 
 function noop(req, res, next) {
   next();

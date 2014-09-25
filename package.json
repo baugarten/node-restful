@@ -8,14 +8,17 @@
     "underscore": "~1.5.2"
   },
   "devDependencies": {
+    "api-easy": "^0.3.8",
     "express": "3.1.0",
-    "mongodb": "1.2.14",
+    "factory_girl": "^0.2.0",
     "jade": "0.28.1",
-    "mocha": "1.8.1",
+    "mocha": "1.21.x",
+    "mongodb": "1.2.14",
+    "pow-mongoose-fixtures": "0.3.0",
     "should": "1.2.1",
-    "supertest": "0.5.1",
     "sinon": "1.5.2",
-    "pow-mongoose-fixtures": "0.3.0"
+    "supertest": "0.5.1",
+    "vows": "git+https://github.com/jashkenas/coffee-script.git"
   },
   "keywords": [
     "node-restful",
