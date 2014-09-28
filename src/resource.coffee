@@ -2,31 +2,16 @@ _ = require 'underscore'
 handlers = require './handlers'
 app = require './app'
 filters = require './filters'
-makeRoute = require './route'
+Route = require './route'
 
 class Resource
   # The built in methods that we support
   @ALL_ROUTES:
-    "list":
-      method: "get"
-      detail: false
-      handler: handlers.list
-    "detail":
-      method: "get"
-      detail: true
-      handler: handlers.detail
-    "update":
-      method: "put"
-      detail: true
-      handler: handlers.update
-    "create":
-      method: "post"
-      detail: false
-      handler: handlers.create
-    "destroy":
-      method: "delete"
-      detail: true
-      handler: handlers.destroy
+    "list": Route.makeRoute('', 'get', handlers.list, false)
+    "detail": Route.makeRoute('', 'get', handlers.detail, true)
+    "update": Route.makeRoute('', 'put', handlers.update, true)
+    "create": Route.makeRoute('', 'post', handlers.create, false)
+    "destroy": Route.makeRoute('', 'delete', handlers.destroy, true)
 
   @ALL_METHODS: ['get', 'put', 'post', 'delete']
 
@@ -40,17 +25,13 @@ class Resource
     newRoutes = @arrayify(newRoutes)
     validRoutes = Object.keys(Resource.ALL_ROUTES)
     
-    newRoutes.forEach (route) ->
-      unless route in validRoutes
-        throw new Error("Route '#{route}' not recognized as built in route. " +
+    routes = _.map newRoutes, (routeName) =>
+      unless routeName in validRoutes
+        throw new Error("'#{routeName}' not recognized as built in route. " +
           "Valid choices are [#{validRoutes}]")
 
-    routes = _.map(_.filter(validRoutes, (routeName) ->
-      routeName in newRoutes
-    ), (routeName) =>
-      route = Resource.ALL_ROUTES[routeName]
-      makeRoute('', route.method, route.handler, route.detail)
-    )
+      Resource.ALL_ROUTES[routeName]
+
     routes.forEach _.bind(@insertRoute, @)
     @addedRoutes = true
     @
@@ -74,7 +55,7 @@ class Resource
 
     methods = [methods] unless _.isArray(methods)
     methods.forEach (method) =>
-      route = makeRoute(path, method, fn, detail)
+      route = Route.makeRoute(path, method, fn, detail)
       route = @insertRoute(route)
     @
 
@@ -85,7 +66,7 @@ class Resource
         existingRoute = @findRoute(path, method, detail)
         unless existingRoute
           throw new Error("Trying to add #{beforeOrAfter} middleware on an " +
-            "unregistered route #{path} #{method} #{detail}")
+            "unregistered route (#{path},#{method},isDetail=#{detail})")
         existingRoute[beforeOrAfter](fn)
       @
 

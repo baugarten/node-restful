@@ -1,64 +1,62 @@
-should = require("should")
-mongoose = require("mongoose")
-request = require("supertest")
-config = require("./fixtures/config")
-sinon = require("sinon")
+should = require('should')
+config = require('./fixtures/config')
 FactoryGirl = require('factory_girl')
-checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$")
-oldA = should.Assertion::a
+checkForHexRegExp = new RegExp('^[0-9a-fA-F]{24}$')
+RestfulApiTester = require('./helper')
 
-should.Assertion::a = (type, desc) ->
-  if type is "_id"
-    @assert checkForHexRegExp.test(@obj),
-      -> "expected #{@inspect} to be an #{type}" +
-        ((if desc then " | " + desc else ""))
-    , -> "expected #{@inspect} not to be an #{type}" +
-        ((if desc then " | " + desc else ""))
-    @
-  oldA.call @, type, desc
-
-
-describe "Model", ->
+describe 'Model', ->
   app = null
+  userTester = null
 
   before (done) ->
     config.ready ->
       app = config.app
+      userTester = new RestfulApiTester app, '/users', ->
+        FactoryGirl.create('user')
       done()
 
-  getUsers = (path) ->
-    request(app)
-      .get("/users#{path}")
-
-  postUsers = (user) ->
-    (done) ->
-      request(app)
-        .post("/users")
-        .send(user)
-        .expect 201, done
-
-  expectUsersList = (num) ->
-    (cb) ->
-      getUsers('')
-        .expect("Content-Type", /json/)
+  describe 'handlers', ->
+    it.skip 'should handle schema request for users', (done) ->
+      getUsers('/schema')
+        .expect('Content-Type', /json/)
         .expect(200)
         .end (err, res) ->
-          res.body.should.have.lengthOf(num)
-          cb(err)
-
-  describe "handlers", ->
-    it.skip "should handle schema request for users", (done) ->
-      getUsers("/schema")
-        .expect("Content-Type", /json/)
-        .expect(200)
-        .end (err, res) ->
-          res.body.resource.should.equal "users"
-          res.body.fields.should.be.a "object"
+          res.body.resource.should.equal 'users'
+          res.body.fields.should.be.a 'object'
           done()
 
-    it "should GET a list of 0 users", expectUsersList(0)
+    it 'should GET a list of 0 users', (done) ->
+      userTester.listWithLength(0, done)
 
-    it "should POST a user", postUsers(FactoryGirl.create('user'))
+    it 'should POST a user', (done) ->
+      userTester.createSuccessfully(done)
 
-    it "should GET a list of 1 users", expectUsersList(1)
+    it 'should GET a list of 1 users', (done) ->
+      userTester.listWithLength(1, done)
+
+    it 'should GET details for a single user', (done) ->
+      userTester.availableModels (users) ->
+        userTester.detailWithProperties users[0]._id,
+          users[0],
+          done
+
+    it 'should PUT a user', (done) ->
+      userTester.availableModels (users) ->
+        userTester.updateSuccessfully users[0]._id,
+          username: 'whoah, another username',
+          done
+
+    it 'should GET details for a single user', (done) ->
+      userTester.availableModels (users) ->
+        users[0].username.should.be.equal('whoah, another username')
+        userTester.detailWithProperties users[0]._id,
+          users[0],
+          done
+
+    it 'should DELETE the user', (done) ->
+      userTester.availableModels (users) ->
+        userTester.destroySuccessfully users[0]._id, done
+
+    it 'should GET a list of 0 users', (done) ->
+      userTester.listWithLength(0, done)
 

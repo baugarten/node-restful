@@ -24,11 +24,11 @@ class Route
   toString: ->
     "('#{@path}', #{@method}, detail=#{@detail})"
 
-makeRoute = (path, method, handler, detail) ->
-  if (path?.length > 0 and path.charAt(0) != '/')
-    path = "/#{path}"
+  @makeRoute: (path, method, handler, detail) ->
+    if (path?.length > 0 and path.charAt(0) != '/')
+      path = "/#{path}"
 
-  new Route(path, method, handler, detail)
+    new Route(path, method, handler, detail)
 
-module.exports = makeRoute
+module.exports = Route
 

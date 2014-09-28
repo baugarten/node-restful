@@ -34,11 +34,8 @@ exports.getPath = (pathName) ->
       next()
 
 exports.create = (req, res, next) ->
-  console.log("Posting object")
   obj = new @Model(req.body)
-  console.log("Saving obj", obj)
   obj.save (err) ->
-    console.log("Object saved")
     exports.respondOrError(res, err, 400, obj, 201)
     next()
 

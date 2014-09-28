@@ -12,10 +12,11 @@
     "express": "3.1.0",
     "factory_girl": "0.2.x",
     "jade": "0.28.1",
+    "js-combinatorics": "^0.4.0",
     "mocha": "1.21.x",
     "mongodb": "1.2.14",
     "pow-mongoose-fixtures": "0.3.0",
-    "should": "1.2.1",
+    "should": "3.3.x",
     "sinon": "1.5.2",
     "supertest": "0.5.1",
     "vows": "git+https://github.com/jashkenas/coffee-script.git"

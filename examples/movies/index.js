@@ -10,9 +10,7 @@ app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
 
-mongoose.connect("mongodb://localhost/movies_test", {}, function() {
-  console.log("Connected", arguments);                
-});
+mongoose.connect("mongodb://localhost/movies_test")
 
 var user = mongoose.model('users', mongoose.Schema({
     username: { type: 'string', required: true },

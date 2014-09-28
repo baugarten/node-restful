@@ -21,9 +21,9 @@ build:
 	coffee -o lib/ -c src/
 
 test: build
-	@NODE_ENV=test mocha \
+	@NODE_ENV=test ./node_modules/.bin/mocha \
 		--reporter $(REPORTER) \
-		--compilers coffee:coffee-script \
+		--compilers coffee:coffee-script/register \
 		$(MOCHA_OPTS) \
 		test/*.coffee	
 
