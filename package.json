@@ -10,7 +10,7 @@
   "devDependencies": {
     "api-easy": "^0.3.8",
     "express": "3.1.0",
-    "factory_girl": "^0.2.0",
+    "factory_girl": "0.2.x",
     "jade": "0.28.1",
     "mocha": "1.21.x",
     "mongodb": "1.2.14",
