@@ -10,6 +10,7 @@
   "devDependencies": {
     "api-easy": "^0.3.8",
     "coffee-coverage": "^0.4.2",
+    "coffee-script": "^1.6.3",
     "express": "3.1.0",
     "factory_girl": "0.2.x",
     "jade": "0.28.1",
