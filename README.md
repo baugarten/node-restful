@@ -129,11 +129,11 @@ And that's everything for now!
 
 ### Built-in Filters
 
-Node-restful accepts many options to manipulate the list results. These options can be passed with your request either via the querystring or the POST body. They are passed into the mongoose query to filter your resultset.
+Node-restful accepts many options to manipulate the list results. These options can be added to your request either via the querystring or the POST body. They are passed into the mongoose query to filter your resultset.
 
 #### Selecting the entity-properties you need
 
-If you only need a few properties instead of the whole model, you can ask the service to only give just the properties you need:
+If you only need a few properties instead of the entire model, you can ask the service to only give just the properties you need:
 
 A `GET` request to `/users/?select=name%20email` will result in:
 
