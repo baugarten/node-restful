@@ -180,7 +180,7 @@ use filters for that. You can ask the service for equality, or values greater or
 | **less than**                | `lt`     | `/users?age__lt=30`                                  | returns all users age 29 and younger                              |
 | **less than or equal to**    | `lte`    | `/users?age__lte=30`                                 | returns all users age 30 and younger                             |
 | **in**                       | `in`     | `/users?gender__in=female,male`                         | returns all female and male users                    |
-| **Regex**                    | `regex`  | `/users?username__regex=/^baugarten/i` | returns all users with a username starting with baugarten (case sensitive)           |
+| **Regex**                    | `regex`  | `/users?username__regex=/^baugarten/i` | returns all users with a username starting with baugarten           |
 
 ### Populating a sub-entity
 
