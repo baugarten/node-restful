@@ -1,4 +1,5 @@
 _ = require 'underscore'
+mongooseApiQuery = require('mongoose-api-query')
 handlers = require './handlers'
 app = require './app'
 filters = require './filters'
@@ -104,13 +105,18 @@ class Resource
       _.bind(handlers.last, @)
     )
 
-  filter: (req, query = @Model.find({})) ->
-    detail = req.params.id?
-    query = @Model.findById(req.params.id) if req.params.id
-    [req.body, req.query, req.headers].forEach (requestData) ->
-      for key, value of requestData
-        query = filters.filter(key, value, detail, query)
+  merge = (obj1, obj2) ->
+      for k,v of obj2
+        obj1[k] = v
+      obj1
 
+  filter: (req) ->  
+    detail = req.params.id?
+    params = merge(req.body, req.query)
+    console.log(params)
+    query = @Model.apiQuery(params)
+    if detail
+      query = query.findOne({ id: req.params.id })
     query
 
   setRemoveOptions: (@removeOptions) ->

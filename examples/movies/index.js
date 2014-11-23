@@ -12,16 +12,16 @@ app.mongoose = mongoose; // used for testing
 
 mongoose.connect("mongodb://localhost/movies_test")
 
-var user = mongoose.model('users', mongoose.Schema({
+var userSchema = mongoose.Schema({
     username: { type: 'string', required: true },
     pass_hash: { type: 'number', required: true }
-  }));
+  });
 
-var userResource = app.user = restful.resource('users')
+var userResource = app.user = restful.resource('users', userSchema)
   .withRoutes(['list', 'detail', 'update', 'create', 'destroy'])
   .register()
 
-var movie = app.movie = mongoose.model("movies", mongoose.Schema({
+var movieSchema = app.movie = mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number', required: true },
     creator: {type: 'ObjectId', ref: 'users' },
@@ -35,9 +35,9 @@ var movie = app.movie = mongoose.model("movies", mongoose.Schema({
       director: { type: 'ObjectId', ref: 'users' }
     },
     secret: { type: 'string', select: false }
-  }));
+  });
 
-var movieResource = app.movie = restful.resource('movies');
+var movieResource = app.movie = restful.resource('movies', movieSchema);
 movieResource
   .withRoutes(['list', 'detail', 'update', 'create', 'destroy'])
   //.baseUrl('api/movies')
