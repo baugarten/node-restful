@@ -9,12 +9,14 @@ Register mongoose resources and default RESTful routes are automatically made
 
 ```js
 var express = require('express'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     restful = require('node-restful'),
     mongoose = restful.mongoose;
 var app = express();
 
-app.use(express.bodyParser());
-app.use(express.query());
+app.use(bodyParser.json());
+app.use(methodOverride());
 
 mongoose.connect("mongodb://localhost/resources");
 
