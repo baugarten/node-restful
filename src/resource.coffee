@@ -17,6 +17,7 @@ class Resource
   @ALL_METHODS: ['get', 'put', 'post', 'delete']
 
   constructor: (@resourceName, @Model) ->
+    @preprocessor = handlers.preprocess(@Model)
     @routes = []
 
   withRoutes: (newRoutes) ->
@@ -56,7 +57,7 @@ class Resource
 
     methods = [methods] unless _.isArray(methods)
     methods.forEach (method) =>
-      route = Route.makeRoute(path, method, fn, detail)
+      route = Route.makeRoute(path, method, handle: fn, detail)
       route = @insertRoute(route)
     @
 
@@ -87,7 +88,7 @@ class Resource
       throw new Error("Trying to register route twice. " +
         "#{existingRoute} already registered. #{route} ignored")
 
-  register: () ->
+  register: ->
     unless @addedRoutes
       console.log('No built in routes specified. Adding list and detail routes')
       @withRoutes('list', 'detail')
@@ -97,23 +98,15 @@ class Resource
   registerRoute: (route) ->
     return unless route.handler
     url = "/#{@resourceName}#{route.url()}"
-    app[route.method](url, @makeHandler(route))
+    console.log("Registering", route.method, url)
+    app[route.method](url, @preprocessor, @makeHandler(route))
 
   makeHandler: (route) ->
-    return [_.bind(handlers.preprocess, @)].concat(
-      _.map(route.handlers(), (handler) => _.bind(handler, @)),
-      _.bind(handlers.last, @)
-    )
-
-  merge = (obj1, obj2) ->
-      for k,v of obj2
-        obj1[k] = v
-      obj1
+    route.handlers()
 
   filter: (req) ->  
     detail = req.params.id?
-    params = merge(req.body, req.query)
-    console.log(params)
+    params = _.extend(req.body, req.query)
     query = @Model.apiQuery(params)
     if detail
       query = query.findOne({ id: req.params.id })

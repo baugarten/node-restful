@@ -17,7 +17,7 @@ class Route
 
   handlers: ->
     return @_before.concat(
-      @handler,
+      @handler.handle,
       @_after
     )
 

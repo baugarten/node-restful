@@ -41,26 +41,29 @@ var movieResource = app.movie = restful.resource('movies', movieSchema);
 movieResource
   .withRoutes(['list', 'detail', 'update', 'create', 'destroy'])
   //.baseUrl('api/movies')
-  .route('recommend', function(req, res, next) {
+  .route('recommend', function(req, cb) {
     console.log("Recommending!\n\n");
-    res.locals.status_code = 200;
-    res.locals.bundle.recommend = 'called';
-    console.log(next);
-    next();
+    cb({
+      statusCode: 200,
+      body: "called"
+    });
   })
-  .route('anotherroute', function(req, res, next) {
+  .route('anotherroute', function(req, cb) {
     res.writeHead(200, {'Content-Type': 'application/json' });
-    res.write(JSON.stringify({
-      anotherroute: "called"
-    }));
-    res.end(); // This ends the request and prevents any after filters from executing
+    cb({
+      statusCode: 200,
+      body: JSON.stringify({
+        anotherroute: "called"
+      })
+    })
   })
-  .route('athirdroute', ["get", "post"], true, function(req, res, next) {
-    res.locals.status_code = 200; // Store response status code
-    res.locals.bundle = {
-      athirdroute: "called" // And response data
-    };
-    next(); // Call *after* filters and then return the response
+  .route('athirdroute', ["get", "post"], true, function(req, cb) {
+    cb({
+      statusCode: 200,
+      body: {
+        athirdroute: "called" // And response data
+      }
+    });
   })
   .before('', 'post', false, noop) // before a POST, execute noop
   .before('', 'get', true, noop)

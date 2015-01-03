@@ -1,146 +1,114 @@
+_ = require 'underscore'
+
 class Response
   constructor: (@body, @statusCode) ->
 
+class InternalError extends Response
+  constructor: (@body) ->
+    super(@body, 500)
+
+class OkResponse extends Response
+  constructor: (@body = {}) ->
+    super(@body, 200)
+
+class BadRequest extends Response
+  constructor: (@body) ->
+    super(@body, 400)
+
+NO_CONTENT = new Response({}, 204)
+CREATED = new Response({}, 201)
+NOT_FOUND = new Response({}, 404)
+  
 class Handler
-  handle: (req) ->
-    next()
+  constructor: (@underlyingHandler) ->
+    _.bind(@underlyingHandler, @)
+    _.bindAll(@, 'handle', 'getOne', 'filter', 'create')
+  handle: (req, res, next) ->
+    @underlyingHandler req, (response) ->
+      if response
+        res.status(response.statusCode)
+          .json(response.body)
+      else
+        next()
 
   getOne: (req) ->
-    null
+    detail = req.params.id?
+    if !detail
+      throw new Error("Trying to getOne not in a detail route")
+
+    req.Model.findById req.param("id")
 
   filter: (req) ->
-    null
+    params = _.extend({}, req.body, req.query, req.query.params)
+    req.Model.apiQuery(params)
 
-  create: (req) ->
-    null
+  create: (req) -> 
+    new req.Model(req.body)
 
-class ListHandler extends Handler
-  handle: (req) ->
-    query = filter(req)
-    query.exec (err, list) ->
-      exports.respondOrError(res, err, 500, list, 200)
-      next()
+listHandler = new Handler (req, cb) ->
+  @filter(req).exec (err, list) ->
+    if err
+      cb(new InternalError(err))
+    else
+      cb(new OkResponse(list))
 
-class DetailHandler extends Handler
-  handle: (req) ->
-    getOne(req).exec (err, obj) ->
-    exports.respondOrError(res, err, 500, list, 200)
-    next()  
+getHandler = new Handler (req, cb) ->
+  @getOne(req).exec (err, obj) ->
+    if err
+      cb(new InternalError(err))
+    else if !obj
+      cb(NOT_FOUND)
+    else
+      cb(new OkResponse(obj))
 
-class DetailPathHandler extends Handler
-  pathName: "something"
-
-  handle: (req) ->
+detailPathHandlerGenerator = (pathName) ->
+  detailPathHandler = new Handler (req, cb) ->
     getOne(req).populate(pathName).exec (err, obj) ->
-      errStatus = err?.status or 500
-      exports.respondOrError(res, err, errStatus, obj?.get(pathName), 200)
-      next()
-
-class PostHandler extends Handler
-  handle: (req) ->
-    create(req.body).save (err) ->
-      exports.respondOrError(res, err, 400, obj, 201)
-      next()
-
-class PutHandler extends Handler
-  handle: (req) ->
-    query = getOne(req)
-    if req.body?._id == req.params.id
-      delete req.body._id
-    query.findOneAndUpdate {}, req.body, (err, obj) ->
       if err
-        exports.respond(res, err, 500)
+        cb(new InternalError(err))
       else if !obj
-        exports.respond(res, exports.objectNotFound, 404)
+        cb(NOT_FOUND)
       else
-        exports.respond(res, obj, 200)
-      next()
+        cb(new OkResponse(obj?.get(pathName)))
+  detailPathHandler.handle
 
-class DeleteHandler extends Handler
-  handle: (req) ->
-    getOne(req).findOneAndRemove {}, (err, obj) ->
-      if err
-        exports.respond(res, err, 500)
-      else if !obj
-        exports.respond(res, exports.objectNotFound, 404)
-      else
-        exports.respond(res, obj, 204)
-      next()
+postHandler = new Handler (req, cb) ->
+  @create(req).save (err, obj) ->
+    if err
+      cb(new BadRequest(err))
+    else
+      cb(CREATED)
 
-
-exports.preprocess = (req, res, next) ->
-  req.body = req.body or {}
-  req.query = @filter(req)
-  res.locals = res.locals or {}
-  res.locals.bundle = {}
-  next()
-
-exports.last = (req, res, next) ->
-  if res.locals.bundle
-    # res.send(res.locals.bundle)
-    # res.render(this.templateRoot + '/' + req.templatePath, res.locals.bundle)
-    res.statusCode = res.locals.status_code
-    res.send(res.locals.bundle)
-  else
-    res.send()
-
-exports.list = (req, res, next) ->
-  req.query.exec (err, list) ->
-    exports.respondOrError(res, err, 500, list, 200)
-    next()
-
-exports.detail = (req, res, next) ->
-  req.query.exec (err, obj) ->
-    exports.respondOrError(res, err, 500, obj, 200)
-    next()
-
-exports.getPath = (pathName) ->
-  (req, res, next) ->
-    req.query = req.query.populate(pathName)
-    req.query.exec (err, obj) ->
-      errStatus = err?.status or 500
-      exports.respondOrError(res, err, errStatus, obj?.get(pathName), 200)
-      next()
-
-exports.create = (req, res, next) ->
-  obj = new @Model(req.body)
-  obj.save (err) ->
-    exports.respondOrError(res, err, 400, obj, 201)
-    next()
-
-exports.update = (req, res, next) ->
+putHandler = new Handler (req, cb) ->
+  query = @getOne(req)
   if req.body?._id == req.params.id
     delete req.body._id
-  req.query.findOneAndUpdate {}, req.body, (err, obj) ->
+  query.findOneAndUpdate {}, req.body, (err, obj) ->
     if err
-      exports.respond(res, err, 500)
+      cb(new InternalError(err))
     else if !obj
-      exports.respond(res, exports.objectNotFound, 404)
+      cb(NOT_FOUND)
     else
-      exports.respond(res, obj, 200)
-    next()
+      cb(NO_CONTENT)
 
-exports.destroy = (req, res, next) ->
-  req.query.findOneAndRemove {}, (err, obj) ->
+deleteHandler = new Handler (req, cb) ->
+  @getOne(req).findOneAndRemove {}, (err, obj) ->
     if err
-      exports.respond(res, err, 500)
+      cb(new InternalError(err))
     else if !obj
-      exports.respond(res, exports.objectNotFound, 404)
+      cb(NOT_FOUND)
     else
-      exports.respond(res, obj, 204)
-    next()
+      cb(NO_CONTENT)
 
-exports.objectNotFound =
-  status: 404
-  message: 'Resource not found'
-  name: 'NotFound'
 
-exports.respondOrError = (res, errObj, errStatusCode, succObj, succStatusCode) ->
-  if errObj
-    exports.respond(res, errObj, errStatusCode)
-  else
-    exports.respond(res, succObj, succStatusCode)
-
-exports.respond = (res, content, statusCode) ->
-  res.locals.bundle = content
-  res.locals.status_code = statusCode
+module.exports =
+  "list": listHandler,
+  "detail": getHandler,
+  "getDetail": detailPathHandlerGenerator,
+  "create": postHandler,
+  "update": putHandler,
+  "destroy": deleteHandler,
+  "preprocess": (Model) ->
+    (req, res, next) ->
+      req.Model = Model
+      next()
