@@ -31,29 +31,39 @@ class Handler
       else
         next()
 
-  getOne: (req) ->
+  getOne: (req, query = req.Model.find()) ->
     detail = req.params.id?
     if !detail
       throw new Error("Trying to getOne not in a detail route")
 
-    req.Model.findById req.param("id")
+    query.findOne id: req.param("id")
 
   filter: (req) ->
     params = _.extend({}, req.body, req.query, req.query.params)
+    console.log(params)
     req.Model.apiQuery(params)
 
   create: (req) -> 
     new req.Model(req.body)
 
+  populate: (req, query = req.Model.find()) ->
+    params = _.extend({}, req.body, req.query, req.query.params)
+    console.log("Populate?", params.populate)
+    if params.populate
+      console.log("POPULATING", params.populate.split(','))
+      params.populate.split(',').forEach (param) ->
+        query = query.populate(param)
+    query
+
 listHandler = new Handler (req, cb) ->
-  @filter(req).exec (err, list) ->
+  @populate(req, @filter(req)).exec (err, list) ->
     if err
       cb(new InternalError(err))
     else
       cb(new OkResponse(list))
 
 getHandler = new Handler (req, cb) ->
-  @getOne(req).exec (err, obj) ->
+  @populate(req, @getOne(req)).exec (err, obj) ->
     if err
       cb(new InternalError(err))
     else if !obj

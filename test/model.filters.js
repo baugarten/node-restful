@@ -23,7 +23,10 @@ describe('Model', function() {
       movie3 = config.movies[2];
       user1 = config.users[0];
       user2 = config.users[1];
-      done();
+      console.log("LKASJDLKASJDLKASJDLKASJD")
+      movies.Model.find (err, models) ->
+        console.log("Movies found 2: ", models.length)
+        done();
     });
   });
   describe('filters', function() {

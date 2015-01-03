@@ -90,7 +90,6 @@ class Resource
 
   register: ->
     unless @addedRoutes
-      console.log('No built in routes specified. Adding list and detail routes')
       @withRoutes('list', 'detail')
 
     @routes.forEach _.bind(@registerRoute, @)
@@ -98,7 +97,6 @@ class Resource
   registerRoute: (route) ->
     return unless route.handler
     url = "/#{@resourceName}#{route.url()}"
-    console.log("Registering", route.method, url)
     app[route.method](url, @preprocessor, @makeHandler(route))
 
   makeHandler: (route) ->
