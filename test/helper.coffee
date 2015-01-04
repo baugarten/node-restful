@@ -46,14 +46,12 @@ class RestfulApiTester extends ApiTester
     @create()
       .expect(201)
       .end (err, res) ->
-        console.log(res.text)
         cb(err)
         
   updateSuccessfully: (id, body, cb) ->
     @update(id, body)
       .expect(204)
       .end (err, res) ->
-        console.log(res.text)
         cb(err)
   
   destroySuccessfully: (id, cb) ->

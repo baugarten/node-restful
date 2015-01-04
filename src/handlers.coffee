@@ -40,7 +40,6 @@ class Handler
 
   filter: (req) ->
     params = _.extend({}, req.body, req.query, req.query.params)
-    console.log(params)
     req.Model.apiQuery(params)
 
   create: (req) -> 
@@ -48,9 +47,7 @@ class Handler
 
   populate: (req, query = req.Model.find()) ->
     params = _.extend({}, req.body, req.query, req.query.params)
-    console.log("Populate?", params.populate)
     if params.populate
-      console.log("POPULATING", params.populate.split(','))
       params.populate.split(',').forEach (param) ->
         query = query.populate(param)
     query
