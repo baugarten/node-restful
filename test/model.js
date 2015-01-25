@@ -79,7 +79,7 @@ describe('Model', function() {
         .expect(201 )
         .end(function(err, res) {
           res.body.title.should.equal('A very stupid movie');
-          res.body._id.should.a('_id');
+          res.body._id.should.be.a('_id');
           done(err);
         });
     });

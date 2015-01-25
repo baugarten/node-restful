@@ -40,5 +40,14 @@ describe('Model', function() {
           done();
         });
     });
+    it('should use the properties set in a before route for filtering', function(done) {
+      request(app)
+        .get('/users')
+        .end(function(err, res) {
+          console.log(res.body);
+          res.body.should.have.length(1);
+          done(err);
+        });
+    });
   });
 });

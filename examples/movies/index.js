@@ -16,6 +16,10 @@ var user = app.user = restful.model('users', mongoose.Schema({
     pass_hash: { type: 'number', required: true }
   }))
   .methods(['get', 'post', 'put', 'delete'])
+  .before('get', function(req, res, next) {
+    req.body.limit = 1;
+    next()
+  })
   .removeOptions({
     sort: 'field -username'
   })
