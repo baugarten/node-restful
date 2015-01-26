@@ -1,7 +1,7 @@
 {
   "name": "node-restful",
   "description": "A library for making REST API's in node.js with express",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "peerDependencies": {
     "mongoose": "~3"
   },
