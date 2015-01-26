@@ -97,7 +97,13 @@ class Resource
   registerRoute: (route) ->
     return unless route.handler
     url = "/#{@resourceName}#{route.url()}"
-    app[route.method](url, @preprocessor, @makeHandler(route))
+    app[route.method](
+      url, 
+      route.beforeHanders, 
+      @preprocessor, 
+      route.handler,
+      route.afterHandlers
+    )
 
   makeHandler: (route) ->
     route.handlers()

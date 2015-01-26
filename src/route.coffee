@@ -1,13 +1,14 @@
 handlers = require('./handlers')
+
 class Route
   constructor: (@path, @method, @handler, @detail=false,
-    @_before=[], @_after=[]) ->
+    @beforeHandlers=[], @afterHandlers=[]) ->
 
   before: (before) ->
-    @_before.push before
+    @beforeHandlers.push before
 
   after: (after) ->
-    @_after.push after
+    @afterHandlers.push after
 
   url: ->
     if @detail
@@ -16,9 +17,9 @@ class Route
       url = "#{@path}"
 
   handlers: ->
-    return @_before.concat(
+    return @beforeHandlers.concat(
       @handler.handle,
-      @_after
+      @afterHandlers
     )
 
   toString: ->
