@@ -6,7 +6,7 @@
     "mongoose": "~3"
   },
   "devDependencies": {
-    "express": "3.1.0",
+    "express": "4.1.1",
     "mongodb": "1.2.14",
     "jade": "0.28.1",
     "mocha": "1.8.1",
