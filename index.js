@@ -1,2 +1,4 @@
-module.exports = require('./loader')('restful')
 
+temp = require('./loader')('restful')
+console.log("temp", temp)
+module.exports = temp

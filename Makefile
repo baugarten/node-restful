@@ -18,7 +18,7 @@ clean: clean-docs
 	rm -rf lib/ src-cov/ test/*.js
 
 build:
-	coffee -o lib/ -c src/
+	node_modules/.bin/coffee -o lib/ -c src/
 
 test: build
 	@NODE_ENV=test ./node_modules/.bin/mocha \
