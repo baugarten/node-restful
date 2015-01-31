@@ -97,14 +97,6 @@ class Resource
   registerRoute: (route) ->
     return unless route.handler
     url = "/#{@resourceName}#{route.url()}"
-    console.log(route.beforeHandlers, @preprocessor,
-      route.handler.handle, route.afterHandlers)
-    console.log(route)
-    console.log(route.beforeHandlers.concat( 
-        @preprocessor, 
-        route.handler.handle,
-        route.afterHandlers
-      ))
     app[route.method](
       url, 
       route.beforeHandlers.concat( 
