@@ -146,6 +146,16 @@ describe('Model', function() {
           done();
         });
     });
+    it('should filter fields using nocase', function(done) {
+      request(app)
+        .get('/api/movies?title__nocase=godzilla')
+        .end(function(err, res) {
+          res.body.forEach(function(movie) {
+            movie.title.should.include('Godzilla');
+          });
+          done();
+        });
+    });
     it('should populate an objectId', function(done) {
       request(app)
         .get('/api/movies/' + movie1._id + '?populate=creator')
