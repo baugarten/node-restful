@@ -6,15 +6,16 @@
     "mongoose": "~3"
   },
   "devDependencies": {
+    "body-parser": "^1.12.4",
     "express": "3.1.0",
-    "mongodb": "1.2.14",
     "jade": "0.28.1",
     "mocha": "1.8.1",
+    "mongodb": "1.2.14",
     "mongoose": "~3",
+    "pow-mongoose-fixtures": "0.3.0",
     "should": "1.2.1",
-    "supertest": "0.5.1",
     "sinon": "1.5.2",
-    "pow-mongoose-fixtures": "0.3.0"
+    "supertest": "0.5.1"
   },
   "keywords": [
     "node-restful",
