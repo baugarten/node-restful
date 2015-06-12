@@ -11,8 +11,9 @@ Register mongoose resources and default RESTful routes are automatically made
 var express = require('express'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
+    morgan = require('morgan'),
     restful = require('node-restful'),
-    mongoose = restful.mongoose;
+    mongoose = require('mongoose');
 var app = express();
 
 app.use(morgan('dev'));
