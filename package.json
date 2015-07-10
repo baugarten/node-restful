@@ -3,7 +3,7 @@
   "description": "A library for making REST API's in node.js with express",
   "version": "0.1.18",
   "peerDependencies": {
-    "mongoose": "4.0.5"
+    "mongoose": "~4"
   },
   "devDependencies": {
     "express": "4.12.4",
@@ -12,7 +12,7 @@
     "mongodb": "2.0.33",
     "jade": "1.11.0",
     "mocha": "2.2.5",
-    "mongoose": "4.0.5",
+    "mongoose": "~4",
     "should": "6.0.3",
     "supertest": "1.0.1",
     "sinon": "1.15.3",
