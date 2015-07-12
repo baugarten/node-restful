@@ -16,7 +16,7 @@
     "should": "6.0.3",
     "supertest": "1.0.1",
     "sinon": "1.15.3",
-    "pow-mongodb-fixtures": "0.11.0",
+    "pow-mongodb-fixtures": "git+https://github.com/riyadhalnur/pow-mongodb-fixtures.git#upgrade-mongodb-drivers",
     "morgan": "1.5.3"
   },
   "keywords": [
@@ -29,7 +29,7 @@
   "scripts": {
     "test": "make test"
   },
-  "repository": "git://github.com/rlebron88/node-restful",
+  "repository": "git://github.com/maxaille/node-restful",
   "main": "index.js",
   "dependencies": {
     "underscore": "1.8.3"

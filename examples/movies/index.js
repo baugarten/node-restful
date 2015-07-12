@@ -3,7 +3,7 @@ var express = require('express'),
     methodOverride = require('method-override'),
     mongoose = require('mongoose'),
     morgan = require('morgan'),
-    restful = require('../');
+    restful = require('../../');
 var app = module.exports = express();
 
 app.use(morgan('dev'));
@@ -92,7 +92,7 @@ movie.methods([
       };
       next();
     }],
-    methods: ['get', 'post'],
+    methods: ['get', 'post']
   })
   .before('post', noop) // before a POST, execute noop
   .after('post', noop)
