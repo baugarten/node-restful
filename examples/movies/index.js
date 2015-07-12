@@ -1,10 +1,16 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     mongoose = require('mongoose'),
-    restful = require('../../');
+    morgan = require('morgan'),
+    restful = require('../');
 var app = module.exports = express();
 
-app.use(express.bodyParser());
-app.use(express.query());
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({'extended':'true'}));
+app.use(bodyParser.json());
+app.use(bodyParser.json({type:'application/vnd.api+json'}));
+app.use(methodOverride());
 app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
