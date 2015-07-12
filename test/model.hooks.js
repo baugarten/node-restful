@@ -44,7 +44,6 @@ describe('Model', function() {
       request(app)
         .get('/users')
         .end(function(err, res) {
-          console.log(res.body);
           res.body.should.have.length(1);
           done(err);
         });
