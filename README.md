@@ -9,24 +9,18 @@ Register mongoose resources and default RESTful routes are automatically made
 
 ```js
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    methodOverride = require('method-override'),
-    morgan = require('morgan'),
     restful = require('node-restful'),
     mongoose = restful.mongoose;
 var app = express();
 
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({'extended':'true'}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({type:'application/vnd.api+json'}));
-app.use(methodOverride());
+app.use(express.bodyParser());
+app.use(express.query());
 
 mongoose.connect("mongodb://localhost/resources");
 
 var Resource = app.resource = restful.model('resource', mongoose.Schema({
-    title: String,
-    year: Number,
+    title: 'string',
+    year: 'number',
   }))
   .methods(['get', 'post', 'put', 'delete']);
 
@@ -186,7 +180,6 @@ use filters for that. You can ask the service for equality, or values greater or
 | **less than**                | `lt`     | `/users?age__lt=30`                                  | returns all users age 29 and younger                              |
 | **less than or equal to**    | `lte`    | `/users?age__lte=30`                                 | returns all users age 30 and younger                             |
 | **in**                       | `in`     | `/users?gender__in=female,male`                         | returns all female and male users                    |
-| **nin**                      | `nin`    | `/users?age__nin=18,30`                                 | returns all users with age other than 18 or 30                |
 | **Regex**                    | `regex`  | `/users?username__regex=/^baugarten/i` | returns all users with a username starting with baugarten           |
 
 ### Populating a sub-entity

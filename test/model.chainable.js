@@ -25,11 +25,11 @@ describe('Model', function() {
       .updateOptions({})
       .removeOptions({})
       .template('/idk/where/this/goes/');
-    posts.allowed_methods.should.containEql('get');
-    posts.allowed_methods.should.containEql('post');
-    posts.allowed_methods.should.containEql('put');
-    posts.update_options.should.be.an.instanceOf(Object);
-    posts.remove_options.should.be.an.instanceOf(Object);
+    posts.allowed_methods.should.include('get');
+    posts.allowed_methods.should.include('post');
+    posts.allowed_methods.should.include('put');
+    posts.update_options.should.be.a('object');
+    posts.remove_options.should.be.a('object');
     posts.templateRoot.should.eql('/idk/where/this/goes');
     
   });
@@ -40,7 +40,7 @@ describe('Model', function() {
     }, function(err, post) {
       post.title.should.equal('First post');
       Posts.update({_id: post._id}, { title: "Second post"}, function(err, count, resp) {
-        count.n.should.equal(1);
+        count.should.equal(1)
         done()
       });
     })

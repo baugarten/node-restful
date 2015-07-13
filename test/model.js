@@ -46,7 +46,7 @@ describe('Model', function() {
         .end(function(err, res) {
           res.body.resource.should.equal('movies');
           res.body.allowed_methods.should.eql(Object.keys(movies.allowed_methods));
-          res.body.fields.should.be.an.instanceOf(Object);
+          res.body.fields.should.be.a('object');
           Object.keys(movies.schema.paths).forEach(function(path) {
             res.body.fields.should.have.property(path);
           });
@@ -79,7 +79,7 @@ describe('Model', function() {
         .expect(201 )
         .end(function(err, res) {
           res.body.title.should.equal('A very stupid movie');
-          res.body._id.should.type('string');
+          res.body._id.should.be.a('_id');
           done(err);
         });
     });
@@ -90,7 +90,7 @@ describe('Model', function() {
           title: 'I changed the movie title'
         })
         .expect('Content-Type', /json/)
-        .expect(200)
+        .expect(201)
         .end(function(err, res) {
           res.body.title.should.equal('I changed the movie title');
           movies.findById(movie2._id, function(err, movie) {

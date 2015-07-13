@@ -141,7 +141,7 @@ describe('Model', function() {
         .get('/api/movies?title__regex=2')
         .end(function(err, res) {
           res.body.forEach(function(movie) {
-            movie.title.should.containEql('2');
+            movie.title.should.include('2');
           });
           done();
         });
