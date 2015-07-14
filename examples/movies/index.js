@@ -57,6 +57,7 @@ movie.methods([
     'post', 
     'put', 
     'delete'])
+  .updateOptions({ new: true })
   .route('recommend', function(req, res, next) {
     res.locals.status_code = 200;
     res.locals.bundle.recommend = 'called';
