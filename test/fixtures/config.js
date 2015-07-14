@@ -1,5 +1,5 @@
 var express = require('express'),
-    fixtures = require('pow-mongoose-fixtures'),
+    fixtures = require('pow-mongodb-fixtures'),
     app = require('../../examples/movies/'),
     data = require('./data'),
     done = false,
@@ -11,8 +11,9 @@ exports.app = app;
 exports.movie = app.movie;
 exports.user = app.user;
 mongoose = app.mongoose;
+fixtures = fixtures.connect(mongoose.connection.name);
 
-fixtures.load(data, mongoose.connection, function(err) {
+fixtures.load(data, function(err) {
   exports.users = data.users;
   exports.movies = data.movies;
   done = true;
