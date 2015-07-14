@@ -1,16 +1,10 @@
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    methodOverride = require('method-override'),
     mongoose = require('mongoose'),
-    morgan = require('morgan'),
     restful = require('../../');
 var app = module.exports = express();
 
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({'extended':'true'}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({type:'application/vnd.api+json'}));
-app.use(methodOverride());
+app.use(express.bodyParser());
+app.use(express.query());
 app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
@@ -92,7 +86,7 @@ movie.methods([
       };
       next();
     }],
-    methods: ['get', 'post']
+    methods: ['get', 'post'],
   })
   .before('post', noop) // before a POST, execute noop
   .after('post', noop)

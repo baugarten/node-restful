@@ -3,21 +3,18 @@
   "description": "A library for making REST API's in node.js with express",
   "version": "0.1.19",
   "peerDependencies": {
-    "mongoose": "~4"
+    "mongoose": "~3"
   },
   "devDependencies": {
-    "express": "4.12.4",
-    "body-parser": "1.12.4",
-    "method-override": "2.3.3",
-    "mongodb": "2.0.33",
-    "jade": "1.11.0",
-    "mocha": "2.2.5",
-    "mongoose": "~4",
-    "should": "6.0.3",
-    "supertest": "1.0.1",
-    "sinon": "1.15.3",
-    "pow-mongodb-fixtures": "git+https://github.com/riyadhalnur/pow-mongodb-fixtures.git#upgrade-mongodb-drivers",
-    "morgan": "1.5.3"
+    "express": "3.1.0",
+    "mongodb": "1.2.14",
+    "jade": "0.28.1",
+    "mocha": "1.8.1",
+    "mongoose": "~3",
+    "should": "1.2.1",
+    "supertest": "0.5.1",
+    "sinon": "1.5.2",
+    "pow-mongoose-fixtures": "0.3.0"
   },
   "keywords": [
     "node-restful",
@@ -29,9 +26,9 @@
   "scripts": {
     "test": "make test"
   },
-  "repository": "git://github.com/maxaille/node-restful",
+  "repository": "git://github.com/baugarten/node-restful",
   "main": "index.js",
   "dependencies": {
-    "underscore": "1.8.3"
+    "underscore": "1.6.0"
   }
 }

@@ -1,8 +1,5 @@
 var express = require('express'),
-    bodyParser = require('body-parser'),
-    methodOverride = require('method-override'),
     mongoose = require('mongoose'),
-    morgan = require('morgan'),
     restful = require('../');
 // Make a new Express app
 var app = module.exports = express();
@@ -11,11 +8,8 @@ var app = module.exports = express();
 mongoose.connect("mongodb://localhost/restful");
 
 // Use middleware to parse POST data and use custom HTTP methods
-app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({'extended':'true'}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({type:'application/vnd.api+json'}));
-app.use(methodOverride());
+app.use(express.bodyParser());
+app.use(express.methodOverride());
 
 var hashPassword = function(req, res, next) {
   if (!req.body.password)
