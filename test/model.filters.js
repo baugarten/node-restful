@@ -165,5 +165,16 @@ describe('Model', function() {
           done();
         });
     });
+    it('should filter using nin', function(done) {
+      request(app)
+        .get('/api/movies?year__nin=2012,2013,2014')
+        .end(function(err, res) {
+          res.body.length.should.be.above(0)
+          res.body.forEach(function(movie) {
+            [2012,2013,2014].indexOf(movie.year).should.equal(-1);
+          });
+          done();
+        });
+    });
   });
 });
