@@ -226,7 +226,7 @@ describe('Model', function() {
     });
     it('should fail athirdroute (user defined route)', function(done) {
       request(app)
-        .put('/api/movies/athirdroute')
+        .put('/api/movies/' + movie1._id + '/athirdroute')
         .expect(404, done);
     });
     it('should allow put of entire object', function(done) {
