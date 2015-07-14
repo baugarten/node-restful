@@ -1,10 +1,16 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     mongoose = require('mongoose'),
+    morgan = require('morgan'),
     restful = require('../../');
 var app = module.exports = express();
 
-app.use(express.bodyParser());
-app.use(express.query());
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({'extended':'true'}));
+app.use(bodyParser.json());
+app.use(bodyParser.json({type:'application/vnd.api+json'}));
+app.use(methodOverride());
 app.set('view engine', 'jade');
 
 app.mongoose = mongoose; // used for testing
@@ -51,6 +57,7 @@ movie.methods([
     'post', 
     'put', 
     'delete'])
+  .updateOptions({ new: true })
   .route('recommend', function(req, res, next) {
     res.locals.status_code = 200;
     res.locals.bundle.recommend = 'called';
@@ -86,7 +93,7 @@ movie.methods([
       };
       next();
     }],
-    methods: ['get', 'post'],
+    methods: ['get', 'post']
   })
   .before('post', noop) // before a POST, execute noop
   .after('post', noop)

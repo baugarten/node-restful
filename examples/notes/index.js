@@ -1,15 +1,19 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     mongoose = require('mongoose'),
-    restful = require('../../');
-
+    morgan = require('morgan'),
+    restful = require('../');
 var app = module.exports = express();
 
 // Connect to mongodb -- used to store the models
 mongoose.connect("mongodb://localhost/expressmvc");
 
-app.use(express.bodyParser());
-
-app.use(express.methodOverride());
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({'extended':'true'}));
+app.use(bodyParser.json());
+app.use(bodyParser.json({type:'application/vnd.api+json'}));
+app.use(methodOverride());
 
 // expose a list of models to register
 var models = require('./models/index');
