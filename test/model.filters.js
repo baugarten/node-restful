@@ -146,6 +146,17 @@ describe('Model', function() {
           done();
         });
     });
+    it('should filter fields using regex with options', function(done) {
+      request(app)
+        .get('/api/movies?title__regex=' + encodeURIComponent("/tITLE/i"))
+        .end(function(err, res) {
+          res.body.length.should.be.above(0);
+          res.body.forEach(function(movie) {
+            movie.title.toLowerCase().should.containEql('title');
+          });
+          done();
+        });
+    });
     it('should populate an objectId', function(done) {
       request(app)
         .get('/api/movies/' + movie1._id + '?populate=creator')
