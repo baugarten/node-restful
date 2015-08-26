@@ -45,7 +45,8 @@ var movie = app.movie = restful.model("movies", mongoose.Schema({
       productionco: 'string',
       director: { type: 'ObjectId', ref: 'users' }
     },
-    secret: { type: 'string', select: false }
+    secret: { type: 'string', select: false },
+    loc: []
   }));
 
 movie.methods([

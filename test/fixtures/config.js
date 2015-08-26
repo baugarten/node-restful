@@ -13,7 +13,7 @@ exports.user = app.user;
 mongoose = app.mongoose;
 fixtures = fixtures.connect(mongoose.connection.name);
 
-fixtures.load(data, function(err) {
+fixtures.clearAndLoad(data, function(err) {
   exports.users = data.users;
   exports.movies = data.movies;
   done = true;

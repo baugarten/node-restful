@@ -18,6 +18,7 @@ exports.movies = [
     _id: new ObjectId(),
     title: "Title1",
     year: 2012,
+    loc: [1, 2],
     meta: {
       productionco: "idk",
       director: exports.users[1]._id,
@@ -28,27 +29,32 @@ exports.movies = [
   {
     _id: new ObjectId(),
     title: "Title2",
-      year: 2011
+    year: 2011,
+    loc: [12, 1]
   },
   {
     _id: new ObjectId(),
     title: "Title3",
-      year: 2013
+    year: 2013,
+    loc: [1, 1]
   },
   {
     _id: new ObjectId(),
     title: "Title4",
-      year: 2013
+      year: 2013,
+    loc: [2, 2]
   },
   {
     _id: new ObjectId(),
     title: "Title5",
-      year: 2013
+    year: 2013,
+    loc: [3, 3]
   },
   {
     _id: new ObjectId(),
     title: "Title6",
-      year: 2010
+    year: 2010,
+    loc: [0, 0]
   },
   {
     _id: new ObjectId(),
