@@ -36,6 +36,7 @@ var movie = app.movie = restful.model("movies", mongoose.Schema({
     title: { type: 'string', required: true },
     year: { type: 'number', required: true },
     creator: {type: 'ObjectId', ref: 'users' },
+    genre: {type: 'ObjectId', ref: 'genres'},
     comments: [{
       body: {type: 'String'},
       date: {type: 'Date'},
@@ -101,8 +102,17 @@ movie.methods([
   .after('put', noop)
   .after('recommend', after)
   .after('athirdroute', after);
+
+var genre = app.genre = restful.model("genres", mongoose.Schema({
+    name: { type: 'string', required: true }
+  }));
+
+genre.methods(['get', 'put', 'delete']);
+genre.shouldUseAtomicUpdate = false;
+
 user.register(app, '/users');
 movie.register(app, '/api/movies');
+genre.register(app, '/api/genres');
 
 if (!module.parent) {
   app.listen(3000);

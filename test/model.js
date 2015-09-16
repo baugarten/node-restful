@@ -99,6 +99,24 @@ describe('Model', function() {
           });
         });
     });
+    it('should fail on GET missing resource', function(done) {
+      request(app)
+        .get('/api/movies/55e8169191ad293c221a6c9d')
+        .expect(404, done);
+    });
+    it('should fail on PUT missing resource (shouldUseAtomicUpdate=false)', function(done) {
+      request(app)
+        .put('/api/genres/55e8169191ad293c221a6c9d')
+        .send({
+          name: "Mysterious genre"
+        })
+        .expect(404, done);
+    });
+    it('should fail on DELETE missing resource (shouldUseAtomicUpdate=false)', function(done) {
+      request(app)
+        .del('/api/genres/55e8169191ad293c221a6c9d')
+        .expect(404, done);
+    });
     it('should fail on PUT without filter on unsortable model', function(done) {
       request(app)
         .put('/api/movies')
