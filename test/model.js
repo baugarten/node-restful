@@ -114,6 +114,14 @@ describe('Model', function() {
         })
         .expect(404, done);
     });
+    it('should fail on PUT missing resource (shouldUseAtomicUpdate=true)', function(done) {
+      request(app)
+        .put('/api/movies/55e8169191ad293c221a6c9d')
+        .send({
+          title: "Mysterious genre"
+        })
+        .expect(404, done);
+    });
     it('should fail on DELETE missing resource (shouldUseAtomicUpdate=false)', function(done) {
       request(app)
         .del('/api/genres/55e8169191ad293c221a6c9d')
@@ -153,7 +161,7 @@ describe('Model', function() {
             .send({
               title: 'But I already deleted you'
             })
-          .expect(400, done);
+          .expect(404, done);
         });
     });
     it('should 400 deleting a resource twice', function(done) {
@@ -162,7 +170,7 @@ describe('Model', function() {
         .end(function() {
           request(app)
             .del('/api/movies/' + config.movies[6]._id)
-            .expect(400, done);
+            .expect(404, done);
         });
     });
     it('should 404 on undefined route', function(done) {
