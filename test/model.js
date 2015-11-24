@@ -23,7 +23,8 @@ describe('Model', function() {
       movie2, 
       movie3, 
       user1, 
-      user2;
+      user2,
+      review;
   before(function(done) {
     config.ready(function() {
       app = config.app;
@@ -34,6 +35,7 @@ describe('Model', function() {
       movie3 = config.movies[2];
       user1 = config.users[0];
       user2 = config.users[1];
+      review = config.reviews[0];
       done();
     });
   });
@@ -275,6 +277,15 @@ describe('Model', function() {
         .expect(200)
         .end(function(err, res) {
           res.body.pshh.should.equal('called');
+          done(err);
+        });
+    });
+    it('should allow get request for model with field named `length`', function(done) {
+      request(app)
+        .get('/api/reviews/' + review._id)
+        .expect(200)
+        .end(function(err, res) {
+          res.body.body.should.equal('This is a movie review!');
           done(err);
         });
     });
