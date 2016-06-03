@@ -101,6 +101,11 @@ describe('Model', function() {
           });
         });
     });
+    it('should fail on GET invalid resource ID type', function(done) {
+      request(app)
+        .get('/api/movies/55')
+        .expect(404, done);
+    });
     it('should fail on GET missing resource', function(done) {
       request(app)
         .get('/api/movies/55e8169191ad293c221a6c9d')
