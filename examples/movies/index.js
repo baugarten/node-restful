@@ -106,13 +106,19 @@ movie.methods([
 var genre = app.genre = restful.model("genres", mongoose.Schema({
     name: { type: 'string', required: true }
   }));
-
 genre.methods(['get', 'put', 'delete']);
 genre.shouldUseAtomicUpdate = false;
+
+var review = app.genre = restful.model("reviews", mongoose.Schema({
+    body: { type: 'string', required: true },
+    length: { type: Number, min: 0, required: true} // https://github.com/baugarten/node-restful/issues/116
+  }));
+review.methods(['get', 'put', 'delete']);
 
 user.register(app, '/users');
 movie.register(app, '/api/movies');
 genre.register(app, '/api/genres');
+review.register(app, '/api/reviews');
 
 if (!module.parent) {
   app.listen(3000);

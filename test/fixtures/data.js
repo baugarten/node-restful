@@ -91,3 +91,11 @@ exports.movies = [
       year: 2009
   }
 ];
+
+exports.reviews = [
+  {
+    _id: new ObjectId(),
+    body: "This is a movie review!",
+    length: 127
+  }
+];

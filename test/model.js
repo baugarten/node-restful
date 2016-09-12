@@ -23,7 +23,8 @@ describe('Model', function() {
       movie2, 
       movie3, 
       user1, 
-      user2;
+      user2,
+      review;
   before(function(done) {
     config.ready(function() {
       app = config.app;
@@ -34,6 +35,7 @@ describe('Model', function() {
       movie3 = config.movies[2];
       user1 = config.users[0];
       user2 = config.users[1];
+      review = config.reviews[0];
       done();
     });
   });
@@ -99,6 +101,11 @@ describe('Model', function() {
           });
         });
     });
+    it('should fail on GET invalid resource ID type', function(done) {
+      request(app)
+        .get('/api/movies/55')
+        .expect(404, done);
+    });
     it('should fail on GET missing resource', function(done) {
       request(app)
         .get('/api/movies/55e8169191ad293c221a6c9d')
@@ -109,6 +116,14 @@ describe('Model', function() {
         .put('/api/genres/55e8169191ad293c221a6c9d')
         .send({
           name: "Mysterious genre"
+        })
+        .expect(404, done);
+    });
+    it('should fail on PUT missing resource (shouldUseAtomicUpdate=true)', function(done) {
+      request(app)
+        .put('/api/movies/55e8169191ad293c221a6c9d')
+        .send({
+          title: "Mysterious genre"
         })
         .expect(404, done);
     });
@@ -151,7 +166,7 @@ describe('Model', function() {
             .send({
               title: 'But I already deleted you'
             })
-          .expect(400, done);
+          .expect(404, done);
         });
     });
     it('should 400 deleting a resource twice', function(done) {
@@ -160,7 +175,7 @@ describe('Model', function() {
         .end(function() {
           request(app)
             .del('/api/movies/' + config.movies[6]._id)
-            .expect(400, done);
+            .expect(404, done);
         });
     });
     it('should 404 on undefined route', function(done) {
@@ -275,6 +290,15 @@ describe('Model', function() {
         .expect(200)
         .end(function(err, res) {
           res.body.pshh.should.equal('called');
+          done(err);
+        });
+    });
+    it('should allow get request for model with field named `length`', function(done) {
+      request(app)
+        .get('/api/reviews/' + review._id)
+        .expect(200)
+        .end(function(err, res) {
+          res.body.body.should.equal('This is a movie review!');
           done(err);
         });
     });
