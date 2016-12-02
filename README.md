@@ -93,7 +93,7 @@ Resource.route('recommend', ['get', 'put', 'delete'], function(req, res, next) {
     
 Or do some combination of HTTP methods.
 
-Now. Lets say we have to run arbitrary code before or after a route. Lets say we need to hash a password before a POST or PUT operation. Well, easy.
+Now. Let's say we have to run arbitrary code before or after a route. Let's say we need to hash a password before a POST or PUT operation. Well, easy.
 
 ```js
 Resource.before('post', hash_password)
@@ -105,11 +105,11 @@ function hash_password(req, res, next) {
 }
 ```
 
-Boy. That was easy. What about doing stuff after request, but before its sent back to the user? Restful stores the bundle of data to be returned in `res.locals` (see [express docs](http://expressjs.com/api.html#res.locals)). `res.locals.status_code` is the returned status code and `res.locals.bundle` is the bundle of data. In every before and after call, you are free to modify these are you see fit!
+Boy. That was easy. What about doing stuff after request, but before it's sent back to the user? Restful stores the bundle of data to be returned in `res.locals` (see [express docs](http://expressjs.com/api.html#res.locals)). `res.locals.status_code` is the returned status code and `res.locals.bundle` is the bundle of data. In every before and after call, you are free to modify these are you see fit!
 
 ```js
 Resource.after('get', function(req, res, next) {
-  var tmp = res.locals.bundle.title; // Lets swap the title and year fields because we're funny!
+  var tmp = res.locals.bundle.title; // Let's swap the title and year fields because we're funny!
   res.locals.bundle.title = res.locals.bundle.year;
   res.locals.bundle.year = tmp;
   next(); // Don't forget to call next!
