@@ -188,6 +188,8 @@ use filters for that. You can ask the service for equality, or values greater or
 | **in**                       | `in`     | `/users?gender__in=female,male`                         | returns all female and male users                    |
 | **nin**                      | `nin`    | `/users?age__nin=18,30`                                 | returns all users with age other than 18 or 30                |
 | **Regex**                    | `regex`  | `/users?username__regex=/^baugarten/i` | returns all users with a username starting with baugarten           |
+| **within**                    | `geoWithin box`  | `/users?loc__within=1,1&loc__within=2,2` | returns all users with a loc inside of specified box           |
+| **within**                    | `geoWithin polygon`  | `/users?loc__within=1,1&loc__within==1,3&loc__within=2,2` | returns all users with a loc inside of specified polygon           |
 
 ### Populating a sub-entity
 

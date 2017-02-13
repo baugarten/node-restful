@@ -187,5 +187,20 @@ describe('Model', function() {
           done();
         });
     });
+    it('should filter using within', function(done) {
+        request(app)
+            .get('/api/movies?loc__within=0.5,1.5&loc__within=1.5,2.5')
+            .end(function(err, res) {
+                res.body.length.should.be.above(0)
+                res.body.forEach(function(movie) {
+                    movie.loc.should.be.instanceof(Array).and.have.lengthOf(2);
+                    movie.loc[0].should.be.greaterThan(.5);
+                    movie.loc[0].should.be.lessThan(1.5);
+                    movie.loc[1].should.be.greaterThan(1.5);
+                    movie.loc[1].should.be.lessThan(2.5);
+                });
+                done();
+            });
+    });
   });
 });
