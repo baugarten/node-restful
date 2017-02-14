@@ -3,7 +3,7 @@ var restful = require('../../..'),
 
 var User = new restful.Model({
   title: 'user',
-  methods: ['get', 'post', 'put', 'delete'],
+  methods: ['get', 'post', 'put', 'patch', 'delete'],
   schema: mongoose.Schema({
     username: 'string',
     password: 'string',

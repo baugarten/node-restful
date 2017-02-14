@@ -5,7 +5,7 @@ var should = require('should'),
     sinon = require('sinon');
 
 describe('Model', function() {
- 
+
   before(function() {
     restful.model('posts', mongoose.Schema({ title: 'string' }));
   });
@@ -21,17 +21,18 @@ describe('Model', function() {
   it('should add methods in a chainable way', function() {
     var posts = restful.model('posts');
     posts.allowed_methods.should.have.property('get');
-    posts.methods(['get', 'post', 'put'])
+    posts.methods(['get', 'post', 'put', 'patch'])
       .updateOptions({})
       .removeOptions({})
       .template('/idk/where/this/goes/');
     posts.allowed_methods.should.containEql('get');
     posts.allowed_methods.should.containEql('post');
     posts.allowed_methods.should.containEql('put');
+    posts.allowed_methods.should.containEql('patch');
     posts.update_options.should.be.an.instanceOf(Object);
     posts.remove_options.should.be.an.instanceOf(Object);
     posts.templateRoot.should.eql('/idk/where/this/goes');
-    
+
   });
   it('should be updateable', function(done) {
     var Posts = restful.model('posts');

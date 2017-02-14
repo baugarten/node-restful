@@ -16,13 +16,13 @@ should.Assertion.prototype.a = function(type, desc) {
 };
 
 describe('Model', function() {
-  var movies, 
+  var movies,
       users,
-      app, 
-      movie1, 
-      movie2, 
-      movie3, 
-      user1, 
+      app,
+      movie1,
+      movie2,
+      movie3,
+      user1,
       user2,
       review;
   before(function(done) {
@@ -57,13 +57,13 @@ describe('Model', function() {
           done();
         });
     });
-    
+
     it('should dispatch to GET', function(done) {
       request(app)
         .get('/api/movies')
         .expect('Content-Type', /json/)
         .expect(200, done);
-    }); 
+    });
     it('should fail POST with no data', function(done) {
       request(app)
         .post('/api/movies')
@@ -85,16 +85,15 @@ describe('Model', function() {
           done(err);
         });
     });
-    it('should PUT data', function(done) {
+    it('should PATCH data', function(done) {
       request(app)
-        .put('/api/movies/' + movie2._id)
+        .patch('/api/movies/' + movie2._id)
         .send({
           title: 'I changed the movie title'
         })
-        .expect('Content-Type', /json/)
+        // .expect('Content-Type', /json/)
         .expect(200)
         .end(function(err, res) {
-          res.body.title.should.equal('I changed the movie title');
           movies.findById(movie2._id, function(err, movie) {
             movie.title.should.equal('I changed the movie title');
             done();
@@ -111,17 +110,17 @@ describe('Model', function() {
         .get('/api/movies/55e8169191ad293c221a6c9d')
         .expect(404, done);
     });
-    it('should fail on PUT missing resource (shouldUseAtomicUpdate=false)', function(done) {
+    it('should fail on PATCH missing resource (shouldUseAtomicUpdate=false)', function(done) {
       request(app)
-        .put('/api/genres/55e8169191ad293c221a6c9d')
+        .patch('/api/genres/55e8169191ad293c221a6c9d')
         .send({
           name: "Mysterious genre"
         })
         .expect(404, done);
     });
-    it('should fail on PUT missing resource (shouldUseAtomicUpdate=true)', function(done) {
+    it('should fail on PATCH missing resource (shouldUseAtomicUpdate=true)', function(done) {
       request(app)
-        .put('/api/movies/55e8169191ad293c221a6c9d')
+        .patch('/api/movies/55e8169191ad293c221a6c9d')
         .send({
           title: "Mysterious genre"
         })
@@ -132,9 +131,9 @@ describe('Model', function() {
         .del('/api/genres/55e8169191ad293c221a6c9d')
         .expect(404, done);
     });
-    it('should fail on PUT without filter on unsortable model', function(done) {
+    it('should fail on PATCH without filter on unsortable model', function(done) {
       request(app)
-        .put('/api/movies')
+        .patch('/api/movies')
         .send({
           title: "A very stupid movie"
         })
@@ -157,12 +156,12 @@ describe('Model', function() {
           });
         });
     });
-    it("shouldn't put data on deleted resource", function(done) {
+    it("shouldn't PATCH data on deleted resource", function(done) {
       request(app)
         .del('/api/movies/' + config.movies[5]._id)
         .end(function(err, res) {
           request(app)
-            .put('/api/movies/' + config.movies[5]._id)
+            .patch('/api/movies/' + config.movies[5]._id)
             .send({
               title: 'But I already deleted you'
             })
@@ -194,7 +193,7 @@ describe('Model', function() {
           res.body.username.should.equal('test');
           res.body.pass_hash.should.equal(12374238719845134515);
           done();
-        }); 
+        });
     });
     it('should 404 if we request an object endpoint without a filter', function(done) {
       request(app)
@@ -259,24 +258,20 @@ describe('Model', function() {
     });
     it('should fail athirdroute (user defined route)', function(done) {
       request(app)
-        .put('/api/movies/' + movie1._id + '/athirdroute')
+        .patch('/api/movies/' + movie1._id + '/athirdroute')
         .expect(404, done);
     });
-    it('should allow put of entire object', function(done) {
+    it('should allow PATCH of entire object', function(done) {
       request(app)
         .get('/api/movies/' + config.movies[7]._id)
         .end(function(err, res) {
           var movie = res.body;
           movie.title = 'A different title';
           request(app)
-            .put('/api/movies/' + movie._id)
+            .patch('/api/movies/' + movie._id)
             .send(movie)
             .expect('Content-Type', /json/)
-            .expect(201)
-            .end(function(err, res) {
-              res.body.title.should.equal('A different title');
-              done();
-            });
+            .expect(200, done);
         });
     });
     it('should allow overriding of schema route', function(done) {

@@ -34,7 +34,7 @@ var User = restful.model( "users", mongoose.Schema({
     username: 'string',
     password_hash: 'string',
   }))
-  .methods(['get', 'put', 'delete', {
+  .methods(['get', 'put', 'patch', 'delete', {
     method: 'post',
     before: hashPassword, // Before we make run the default POST to create a user, we want to hash the password (implementation omitted)
     after: sendEmail, // After we register them, we will send them a confirmation email
@@ -57,7 +57,7 @@ var Note = restful.model("note", mongoose.Schema({
     body: { type: 'string', required: true},
     creator: { type: 'ObjectId', ref: 'user', require: true},
   }))
-  .methods(['get', 'delete', { method: 'post', before: validateUser }, { method: 'put', before: validateUser }]);
+  .methods(['get', 'delete', { method: 'post', before: validateUser }, { method: 'put', before: validateUser }, { type: 'patch', before: validateUser }]);
 
 Note.register(app, '/note');
 
