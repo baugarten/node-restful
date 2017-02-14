@@ -11,13 +11,13 @@ var validateUser = function(req, res, next) {
       }
       next();
     });
-  } 
+  }
   next(); // Required, so error later
 }
 
 var Note = new restful.Model({
   title: "note",
-  methods: ['get', 'delete', { type: 'post', before: validateUser }, { type: 'put', before: validateUser }],
+  methods: ['get', 'delete', { type: 'post', before: validateUser }, { type: 'put', before: validateUser }, { type: 'patch', before: validateUser }],
   schema: mongoose.Schema({
     title: { type: 'string', required: true},
     body: { type: 'string', required: true},

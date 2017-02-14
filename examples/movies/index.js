@@ -21,7 +21,7 @@ var user = app.user = restful.model('users', mongoose.Schema({
     username: { type: 'string', required: true },
     pass_hash: { type: 'number', required: true }
   }))
-  .methods(['get', 'post', 'put', 'delete'])
+  .methods(['get', 'post', 'put', 'patch', 'delete'])
   .before('get', function(req, res, next) {
     req.body.limit = 1;
     next()
@@ -50,13 +50,14 @@ var movie = app.movie = restful.model("movies", mongoose.Schema({
   }));
 
 movie.methods([
-    { 
-      method: 'get', 
+    {
+      method: 'get',
       before: noop,
       after: noop
-    }, 
-    'post', 
-    'put', 
+    },
+    'post',
+    'put',
+    'patch',
     'delete'])
   .updateOptions({ new: true })
   .route('recommend', function(req, res, next) {
@@ -100,6 +101,8 @@ movie.methods([
   .after('post', noop)
   .before('put', noop)
   .after('put', noop)
+  .before('patch', noop)
+  .after('patch', noop)
   .after('recommend', after)
   .after('athirdroute', after);
 
@@ -113,7 +116,7 @@ var review = app.genre = restful.model("reviews", mongoose.Schema({
     body: { type: 'string', required: true },
     length: { type: Number, min: 0, required: true} // https://github.com/baugarten/node-restful/issues/116
   }));
-review.methods(['get', 'put', 'delete']);
+review.methods(['get', 'put', 'patch', 'delete']);
 
 user.register(app, '/users');
 movie.register(app, '/api/movies');
@@ -129,4 +132,3 @@ function after(req, res, next) {
   res.locals.bundle.after = 'called';
   next();
 }
-
