@@ -59,9 +59,9 @@ npm install node-restful
 
 ## Usage
 
-There is a good example application under examples/movies.
+There is a good example application under the folder "examples/movies".
 
-I will also show some features and use cases for them, how to set up routes, etc.
+I will also show some of their features and use cases, how to set up routes, etc.
 
 ### API
 
